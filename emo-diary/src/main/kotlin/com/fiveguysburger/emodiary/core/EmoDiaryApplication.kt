@@ -1,4 +1,4 @@
-package com.fiveguysburger.emodiary
+package com.fiveguysburger.emodiary.core
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
