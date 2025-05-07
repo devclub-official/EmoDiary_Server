@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class EmoDiaryApplication
 
 fun main(args: Array<String>) {
-	runApplication<EmoDiaryApplication>(*args)
+    runApplication<EmoDiaryApplication>(*args)
 }
