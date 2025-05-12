@@ -3,9 +3,9 @@ spring:
     name: EmoDiary
   # 개발용 설정
   datasource:
-    url: jdbc:mysql://emodiary.duckdns.org:3306/emodiary?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: emodiaryback
-    password: Fiveguysback12$
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:emodiary}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -16,11 +16,11 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
   redis:
-   host: emodiary.duckdns.org
-   port: 6379
-   password: flsdl@qkqn7
-   database: 0
-   timeout: 60000
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:0}
+    timeout: ${REDIS_TIMEOUT:60000}
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
