@@ -44,7 +44,7 @@ class LoginServiceImpl(
         TODO("Not yet implemented")
     }
 
-    override fun loginWithKakao(code: String) {
+    override fun loginWithKakao1(code: String) {
         TODO("Not yet implemented")
     }
 }

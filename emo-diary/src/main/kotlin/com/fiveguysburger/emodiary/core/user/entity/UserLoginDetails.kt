@@ -34,9 +34,9 @@ class UserLoginDetails {
     @CreationTimestamp
     var loginAt: LocalDateTime = LocalDateTime.now()
 
-    @Column(name = "login_method", length = 50)
+    @Column(name = "login_method")
     var loginMethod: String? = null
 
-    @Column(name = "provider_id", length = 50, nullable = false)
+    @Column(name = "provider_id", nullable = false)
     var providerId: String? = null
 }

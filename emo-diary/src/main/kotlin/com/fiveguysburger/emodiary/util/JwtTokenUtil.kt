@@ -21,7 +21,6 @@ class JwtTokenUtil {
     fun generateToken(
         userId: String,
         email: String,
-        name: String,
     ): String {
         val now = Date()
         val expiryDate = Date(now.time + jwtExpirationMs)

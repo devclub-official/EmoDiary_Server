@@ -20,7 +20,7 @@ class Users {
     @Column(name = "id", nullable = false)
     var id: Long? = null
 
-    @Column(name = "email", length = 255, unique = true)
+    @Column(name = "email", unique = true)
     var email: String? = null
 
     @Column(name = "created_at", nullable = false, updatable = false)

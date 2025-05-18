@@ -25,7 +25,7 @@ class LoginController(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "로그인 성공",
+                description = "로그인 성공1",
                 content = [
                     Content(
                         mediaType = MediaType.APPLICATION_JSON_VALUE,
