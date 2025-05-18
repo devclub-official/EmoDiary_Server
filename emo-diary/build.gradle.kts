@@ -23,6 +23,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-batch")
 
     // SNS 로그인을 위한 라이브러리
     implementation("org.springframework.boot:spring-boot-starter-security")
