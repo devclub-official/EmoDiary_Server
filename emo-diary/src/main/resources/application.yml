@@ -15,6 +15,38 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 191979088568-h1j08jaqs86aqg0mk85oir9b3oocb5ob.apps.googleusercontent.com
+            client-secret: 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
+            #redirect-uri: "http://54.180.30.13:8080/api/users/login/google"
+            redirect-uri: "http://localhost:8080/api/login/google"
+            scope:
+              - email
+              - profile
+          kakao:
+            client-id: 7c22e28b8bc4af9fe48a57ca1964055d  # REST API 키
+            client-secret: Bv05x6CaS0qs334ATXMgQmqb3EdAKwi6  # Client Secret 키
+            redirect-uri: http://localhost:8080/api/users/login/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            client-name: Kakao
+            scope:
+              - profile_nickname
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
@@ -31,3 +63,7 @@ springdoc:
   api-docs:
     path: /v3/api-docs
   packages-to-scan: com.fiveguysburger.emodiary
+
+jwt:
+  secret: uW7Pc8RHM3Xb9KpQtYzJdGvNfS5hA2LjE6VwB4Z8C0D1F7G9H5I3J2K4L6M8N0P1Q3R5S7T9U2V4W6X8Y0Z
+  expiration: 86400000  # 24시간
