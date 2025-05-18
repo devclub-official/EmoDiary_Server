@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fiveguysburger.emodiary.core.login.service.LoginService
 import com.fiveguysburger.emodiary.util.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
+@Service
 class LoginServiceImpl(
     private val webClient: WebClient,
     private val jwtTokenProvider: JwtTokenUtil,
