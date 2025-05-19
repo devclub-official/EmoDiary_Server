@@ -1,7 +1,7 @@
-package com.fiveguysburger.emodiary.core.login.service.impl
+package com.fiveguysburger.emodiary.core.service.impl
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fiveguysburger.emodiary.core.login.service.LoginService
+import com.fiveguysburger.emodiary.core.service.LoginService
 import com.fiveguysburger.emodiary.util.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

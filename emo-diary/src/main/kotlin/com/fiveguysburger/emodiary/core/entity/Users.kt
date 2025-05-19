@@ -1,4 +1,4 @@
-package com.fiveguysburger.emodiary.core.user.entity
+package com.fiveguysburger.emodiary.core.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -18,7 +18,7 @@ class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    var id: Long? = null
+    var id: Int? = null
 
     @Column(name = "email", unique = true)
     var email: String? = null

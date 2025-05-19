@@ -1,4 +1,4 @@
-package com.fiveguysburger.emodiary.core.user.entity
+package com.fiveguysburger.emodiary.core.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -20,10 +20,10 @@ class UserLoginDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private var id: Long? = null
+    private var id: Int? = null
 
     @Column(name = "user_id", nullable = false)
-    var userId: Long? = null
+    var userId: Int? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)

@@ -1,4 +1,4 @@
-package com.fiveguysburger.emodiary.core.login.service
+package com.fiveguysburger.emodiary.core.service
 
 interface LoginService {
     fun loginWithGoogle(code: String)

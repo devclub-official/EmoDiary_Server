@@ -1,6 +1,6 @@
-package com.fiveguysburger.emodiary.core.login.controller
+package com.fiveguysburger.emodiary.core.controller
 
-import com.fiveguysburger.emodiary.core.login.service.LoginService
+import com.fiveguysburger.emodiary.core.service.LoginService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.responses.ApiResponse
