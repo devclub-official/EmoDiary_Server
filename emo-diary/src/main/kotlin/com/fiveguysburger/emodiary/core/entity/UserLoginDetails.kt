@@ -11,7 +11,6 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.Temporal
 import jakarta.persistence.TemporalType
-import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 
 @Entity
@@ -29,9 +28,8 @@ class UserLoginDetails {
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     var user: Users? = null
 
-    @Column(name = "login_at", nullable = false, updatable = false)
+    @Column(name = "login_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
     var loginAt: LocalDateTime = LocalDateTime.now()
 
     @Column(name = "login_method")

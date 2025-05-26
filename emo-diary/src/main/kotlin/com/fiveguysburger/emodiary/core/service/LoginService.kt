@@ -1,7 +1,9 @@
 package com.fiveguysburger.emodiary.core.service
 
-interface LoginService {
-    fun loginWithGoogle(code: String)
+import com.fiveguysburger.emodiary.core.dto.TokenResponse
 
-    fun loginWithKakao1(code: String)
+interface LoginService {
+    fun loginWithGoogle(code: String): TokenResponse
+
+    fun loginWithKakao(code: String): TokenResponse
 }
