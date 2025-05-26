@@ -62,6 +62,9 @@ class LoginServiceImpl(
     @Value("\${spring.security.oauth2.client.provider.kakao.user-info-uri}")
     private lateinit var kakaoUserInfoUri: String
 
+    @Value("\${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private lateinit var kakaoRedirectUri: String
+
     override fun loginWithGoogle(code: String): TokenResponse {
         val tokenResponse =
             getGoogleAccessToken(code).block()
@@ -130,8 +133,87 @@ class LoginServiceImpl(
             }
 
     override fun loginWithKakao(code: String): TokenResponse {
-        TODO("Not yet implemented")
+        val tokenResponse =
+            getKakaoAccessToken(code).block()
+                ?: throw RuntimeException("Failed to get access token from Kakao")
+
+        log.debug("Kakao Token Response: $tokenResponse")
+        val accessToken = tokenResponse["access_token"] as String
+
+        // 2. 액세스 토큰으로 사용자 정보 요청
+        val userInfo =
+            getKakaoUserInfo(accessToken).block()
+                ?: throw RuntimeException("Failed to get user info from Kakao")
+
+        log.debug("Kakao User Info: $userInfo") // 디버깅용 로그 추가
+
+        // 3. 사용자 정보 추출 (Null 체크 추가)
+        val kakaoId = userInfo["id"].toString()
+        val kakaoAccount =
+            userInfo["kakao_account"] as? Map<String, Any>
+                ?: throw RuntimeException("kakao_account 정보를 가져올 수 없습니다")
+
+        // nickname을 email로 사용
+        val profileMap =
+            kakaoAccount["profile"] as? Map<String, Any>
+                ?: throw RuntimeException("카카오 계정에서 프로필 정보를 가져올 수 없습니다.")
+
+        val nickname =
+            profileMap["nickname"] as? String
+                ?: throw RuntimeException("카카오 계정에서 닉네임 정보를 가져올 수 없습니다.")
+        // 4. 사용자 확인 및 처리
+        val user = processUserLogin(nickname, kakaoId, "kakao")
+
+        // 5. JWT 토큰 쌍(액세스 토큰, 리프레시 토큰) 생성
+        val (jwtAccessToken, jwtRefreshToken) = jwtTokenUtil.generateTokenPair(kakaoId, nickname)
+
+        // 6. TokenResponse 객체로 변환하여 반환
+        return TokenResponse.of(
+            accessToken = jwtAccessToken,
+            refreshToken = jwtRefreshToken,
+            expiresIn = jwtTokenUtil.jwtExpirationMs / 1000,
+        )
     }
+
+    // Kakao 액세스 토큰 요청
+    private fun getKakaoAccessToken(code: String): Mono<Map<String, Any>> {
+        val params =
+            LinkedMultiValueMap<String, String>().apply {
+                add("grant_type", "authorization_code")
+                add("client_id", kakaoClientId)
+                add("client_secret", kakaoClientSecret)
+                add("redirect_uri", kakaoRedirectUri)
+                add("code", code)
+            }
+
+        return webClient
+            .post()
+            .uri(kakaoTokenUri)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(BodyInserters.fromFormData(params))
+            .retrieve()
+            .bodyToMono(object : ParameterizedTypeReference<Map<String, Any>>() {})
+            .doOnError { error ->
+                log.error("Failed to get Kakao access token: ${error.message}", error)
+                throw RuntimeException("Failed to get Kakao access token", error)
+            }
+    }
+
+    // Kakao 사용자 정보 요청
+    private fun getKakaoUserInfo(accessToken: String): Mono<Map<String, Any>> =
+        webClient
+            .get()
+            .uri(kakaoUserInfoUri)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer $accessToken")
+            .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .map { responseBody ->
+                objectMapper.readValue(responseBody, object : TypeReference<Map<String, Any>>() {})
+            }.onErrorMap { error ->
+                log.error("Error getting Kakao user info: ${error.message}", error)
+                RuntimeException("Failed to get Kakao user info", error)
+            }
 
     @Transactional
     fun saveUserLogin(
