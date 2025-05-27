@@ -68,3 +68,17 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+// QueryDSL 설정
+kapt {
+    keepJavacAnnotationProcessors = true
+}
+
+// QueryDSL Q클래스 생성 위치 설정
+sourceSets {
+    main {
+        java {
+            srcDirs("$buildDir/generated/source/kapt/main")
+        }
+    }
+}
