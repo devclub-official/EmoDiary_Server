@@ -7,5 +7,5 @@ object NotificationConstants {
 
 enum class NotificationType {
     DIARY_REMINDER,
-    INACTIVE_DIARY
-} 
+    INACTIVE_DIARY,
+}

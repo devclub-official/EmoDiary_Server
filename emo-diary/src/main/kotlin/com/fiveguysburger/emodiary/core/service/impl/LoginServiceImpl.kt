@@ -83,7 +83,7 @@ class LoginServiceImpl(
         val email = userInfo["email"] as String
 
         // 4. 사용자 확인 및 처리
-        val user = processUserLogin(email, googleId, "google")
+        processUserLogin(email, googleId, "google")
 
         // 4. JWT 토큰 쌍(액세스 토큰, 리프레시 토큰) 생성
         val (jwtAccessToken, jwtRefreshToken) = jwtTokenUtil.generateTokenPair(googleId, email)
@@ -92,7 +92,7 @@ class LoginServiceImpl(
         return TokenResponse.of(
             accessToken = jwtAccessToken,
             refreshToken = jwtRefreshToken,
-            expiresIn = jwtTokenUtil.jwtExpirationMs / 1000, // 밀리초를 초로 변환
+            expiresIn = jwtTokenUtil.jwtExpirationMs / 1000,
         )
     }
 
