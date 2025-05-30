@@ -35,7 +35,7 @@ class NotificationLogRepositoryImpl(
             .select(QUserLoginDetails.userLoginDetails.userId)
             .from(QUserLoginDetails.userLoginDetails)
             .where(
-                QUserLoginDetails.userLoginDetails.loginAt.lt(oneWeekAgo)
+                QUserLoginDetails.userLoginDetails.loginAt.lt(oneWeekAgo),
             )
             .groupBy(QUserLoginDetails.userLoginDetails.userId)
             .fetch()
@@ -81,4 +81,4 @@ class NotificationLogRepositoryImpl(
             .where(QNotificationLog.notificationLog.userId.eq(userId))
             .orderBy(QNotificationLog.notificationLog.createdAt.desc())
             .fetch()
-} 
+}

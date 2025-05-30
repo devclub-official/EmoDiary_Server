@@ -44,4 +44,4 @@ class NotificationTemplateServiceImpl(
 
         notificationTemplateRepository.save(template.copy(isActive = false))
     }
-} 
+}

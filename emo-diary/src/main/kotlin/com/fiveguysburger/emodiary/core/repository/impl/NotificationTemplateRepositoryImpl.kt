@@ -23,4 +23,4 @@ class NotificationTemplateRepositoryImpl(
             .selectFrom(QNotificationTemplate.notificationTemplate)
             .where(QNotificationTemplate.notificationTemplate.isActive.eq(true))
             .fetch()
-} 
+}

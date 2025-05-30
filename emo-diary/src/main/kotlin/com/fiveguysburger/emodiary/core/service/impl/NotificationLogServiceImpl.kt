@@ -93,4 +93,4 @@ class NotificationLogServiceImpl(
     @Transactional(readOnly = true)
     override fun findUserNotificationHistory(userId: Int): List<NotificationLog> =
         notificationLogRepository.findByUserIdOrderByCreatedAtDesc(userId)
-} 
+}

@@ -16,7 +16,7 @@ interface NotificationLogService {
     fun createNotificationLog(
         userId: Int,
         templateId: Int,
-        notificationType: NotificationType
+        notificationType: NotificationType,
     ): NotificationLog
 
     /**
@@ -47,7 +47,7 @@ interface NotificationLogService {
         templateId: Int,
         status: NotificationStatus,
         fcmMessageId: String? = null,
-        errorMessage: String? = null
+        errorMessage: String? = null,
     )
 
     /**
@@ -56,4 +56,4 @@ interface NotificationLogService {
      * @return 해당 사용자의 알림 로그 목록
      */
     fun findUserNotificationHistory(userId: Int): List<NotificationLog>
-} 
+}
