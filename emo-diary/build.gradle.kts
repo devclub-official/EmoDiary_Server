@@ -82,3 +82,12 @@ sourceSets {
         }
     }
 }
+tasks.named("runKtlintCheckOverMainSourceSet") {
+    mustRunAfter("kaptKotlin")
+    mustRunAfter("kaptGenerateStubsKotlin")
+}
+
+tasks.named("runKtlintCheckOverTestSourceSet") {
+    mustRunAfter("kaptTestKotlin")
+    mustRunAfter("kaptGenerateStubsTestKotlin")
+}
