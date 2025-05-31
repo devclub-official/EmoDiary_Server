@@ -82,3 +82,7 @@ sourceSets {
         }
     }
 }
+
+tasks.named("runKtlintCheckOverMainSourceSet") {
+    dependsOn("kaptKotlin")
+}
