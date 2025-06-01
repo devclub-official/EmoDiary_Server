@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -69,5 +71,52 @@ class LoginController(
     ): ResponseEntity<TokenResponse> {
         val token = loginService.loginWithKakao(code)
         return ResponseEntity.ok(token)
+    }
+
+    @PostMapping("/logout")
+    fun logout(
+        @RequestHeader("Authorization") authorization: String,
+    ): ResponseEntity<Map<String, Any>> {
+        return try {
+            // Bearer 토큰에서 실제 토큰 추출
+            if (!authorization.startsWith("Bearer ")) {
+                return ResponseEntity
+                    .status(401)
+                    .body(mapOf("error" to "Authorization 헤더 형식이 올바르지 않습니다."))
+            }
+
+            val token = authorization.removePrefix("Bearer ").trim()
+
+            if (token.isEmpty()) {
+                return ResponseEntity
+                    .status(401)
+                    .body(mapOf("error" to "토큰이 제공되지 않았습니다."))
+            }
+
+            val success = loginService.logout(token)
+
+            if (success) {
+                ResponseEntity.ok(
+                    mapOf(
+                        "message" to "로그아웃이 완료되었습니다.",
+                        "timestamp" to System.currentTimeMillis(),
+                    ),
+                )
+            } else {
+                ResponseEntity.badRequest().body(
+                    mapOf(
+                        "error" to "로그아웃에 실패했습니다.",
+                        "timestamp" to System.currentTimeMillis(),
+                    ),
+                )
+            }
+        } catch (e: Exception) {
+            ResponseEntity.status(401).body(
+                mapOf(
+                    "error" to "유효하지 않은 토큰입니다.",
+                    "timestamp" to System.currentTimeMillis(),
+                ),
+            )
+        }
     }
 }
