@@ -34,7 +34,7 @@ class FcmServiceImpl(
             val template = notificationTemplateService.getTemplateByType(message.notificationType.value)
                 ?: throw FcmException("템플릿을 찾을 수 없습니다: ${message.notificationType}")
 
-            // 2. 알림 로그 생성
+            // 2. 알림 로그 생성 (PENDING 상태로 시작)
             val notificationLog = notificationLogService.createNotificationLog(
                 userId = message.userId,
                 templateId = template.id.toInt(),
@@ -51,10 +51,18 @@ class FcmServiceImpl(
                 .putAllData(message.data)
                 .build()
 
+            // 4. 전송 중 상태로 업데이트
+            notificationLogService.updateNotificationStatus(
+                userId = message.userId,
+                sentAt = notificationLog.sentAt,
+                templateId = notificationLog.templateId,
+                status = NotificationStatus.SENDING
+            )
+
             val messageId = firebaseMessaging.send(fcmMessage)
             logger.info("FCM 메시지 전송 성공: messageId={}", messageId)
 
-            // 4. 알림 로그 상태 업데이트
+            // 5. 전송 완료 상태로 업데이트
             notificationLogService.updateNotificationStatus(
                 userId = message.userId,
                 sentAt = notificationLog.sentAt,
@@ -67,7 +75,7 @@ class FcmServiceImpl(
         } catch (e: Exception) {
             logger.error("FCM 메시지 전송 실패: {}", e.message, e)
             
-            // 5. 실패 시 상태 업데이트
+            // 6. 실패 상태로 업데이트
             notificationLogService.updateNotificationStatus(
                 userId = message.userId,
                 sentAt = message.sentAt,
