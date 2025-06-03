@@ -1,9 +1,13 @@
 package com.fiveguysburger.emodiary.core.service
 
+import com.fiveguysburger.emodiary.core.dto.NotificationTemplateRequestDto
+import com.fiveguysburger.emodiary.core.dto.NotificationTemplateResponseDto
 import com.fiveguysburger.emodiary.core.entity.NotificationTemplate
 
 interface NotificationTemplateService {
-    fun createTemplate(template: NotificationTemplate): NotificationTemplate
+    fun createTemplate(request: NotificationTemplateRequestDto): NotificationTemplateResponseDto
+
+    fun getTemplate(id: Long): NotificationTemplateResponseDto
 
     fun getTemplateByType(notificationType: Int): NotificationTemplate?
 
@@ -11,8 +15,8 @@ interface NotificationTemplateService {
 
     fun updateTemplate(
         id: Long,
-        template: NotificationTemplate,
-    ): NotificationTemplate
+        request: NotificationTemplateRequestDto,
+    ): NotificationTemplateResponseDto
 
     fun deactivateTemplate(id: Long)
 }
