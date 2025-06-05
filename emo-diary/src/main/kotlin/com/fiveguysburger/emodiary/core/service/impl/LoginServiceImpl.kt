@@ -8,6 +8,7 @@ import com.fiveguysburger.emodiary.core.entity.Users
 import com.fiveguysburger.emodiary.core.repository.UsersLoginDetailsRepository
 import com.fiveguysburger.emodiary.core.repository.UsersRepository
 import com.fiveguysburger.emodiary.core.service.LoginService
+import com.fiveguysburger.emodiary.core.service.RedisTokenService
 import com.fiveguysburger.emodiary.core.service.UsersService
 import com.fiveguysburger.emodiary.util.JwtTokenUtil
 import org.slf4j.LoggerFactory
@@ -30,6 +31,7 @@ class LoginServiceImpl(
     private val usersService: UsersService,
     private val userRepository: UsersRepository,
     private val userLoginDetailsRepository: UsersLoginDetailsRepository,
+    private val redisTokenService: RedisTokenService,
 ) : LoginService {
     private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -274,4 +276,21 @@ class LoginServiceImpl(
             log.error("사용자 로그인 처리 중 오류 발생: email=$email", e)
             throw RuntimeException("사용자 로그인 처리에 실패했습니다: ${e.message}", e)
         }
+
+    override fun logout(token: String): Boolean {
+        return try {
+            // JWT 토큰에서 사용자 ID 추출
+            val claims = jwtTokenUtil.getClaims(token) ?: return false
+            val userId = claims.subject ?: return false
+
+            // Redis에서 사용자 토큰 삭제
+            val isDeleted = redisTokenService.removeUserTokens(userId)
+
+            log.info("사용자 로그아웃 완료: userId={}", userId)
+            isDeleted
+        } catch (e: Exception) {
+            log.error("로그아웃 실패: {}", e.message, e)
+            false
+        }
+    }
 }
