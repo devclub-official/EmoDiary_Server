@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package com.fiveguysburger.emodiary.core.entity
 
 import jakarta.persistence.*
