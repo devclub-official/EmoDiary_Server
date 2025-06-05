@@ -19,4 +19,4 @@ data class NotificationTemplateResponseDto(
     val updatedAt: LocalDateTime,
     @Schema(description = "활성화 여부")
     val isActive: Boolean,
-) 
+)

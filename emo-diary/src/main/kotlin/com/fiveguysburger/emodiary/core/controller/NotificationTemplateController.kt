@@ -51,8 +51,7 @@ class NotificationTemplateController(
     fun updateTemplate(
         @PathVariable id: Long,
         @RequestBody request: NotificationTemplateRequestDto,
-    ): ResponseEntity<NotificationTemplateResponseDto> =
-        ResponseEntity.ok(notificationTemplateService.updateTemplate(id, request))
+    ): ResponseEntity<NotificationTemplateResponseDto> = ResponseEntity.ok(notificationTemplateService.updateTemplate(id, request))
 
     @Operation(
         summary = "알림 템플릿 비활성화",
@@ -65,4 +64,4 @@ class NotificationTemplateController(
         notificationTemplateService.deactivateTemplate(id)
         return ResponseEntity.noContent().build()
     }
-} 
+}
