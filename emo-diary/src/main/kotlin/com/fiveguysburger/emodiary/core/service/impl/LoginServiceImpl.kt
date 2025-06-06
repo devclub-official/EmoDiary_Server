@@ -72,7 +72,6 @@ class LoginServiceImpl(
     // Google OAuth2 상수
     private val googleScope = "openid email profile"
     private val responseType = "code"
-    private val accessType = "offline"
 
     /**
      * 구글 OAuth2 인증 URL 생성
