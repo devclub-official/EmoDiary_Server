@@ -2,7 +2,7 @@ package com.fiveguysburger.emodiary.core.repository
 
 import com.fiveguysburger.emodiary.core.entity.NotificationLog
 import com.fiveguysburger.emodiary.core.enums.NotificationStatus
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 interface NotificationLogRepositoryCustom {
     /**
@@ -13,28 +13,24 @@ interface NotificationLogRepositoryCustom {
     fun findByNotificationStatus(status: NotificationStatus): List<NotificationLog>
 
     /**
-     * 마지막 로그인 시각이 지정된 시각보다 이전인 사용자들을 조회합니다.
-     * @param lastLoginBefore 기준 시각
+     * 일주일 이상 로그인하지 않은 사용자들을 조회합니다.
+     * @param cutoffDate 기준 날짜
      * @return 장기 미접속 사용자 ID 목록
      */
-    fun findInactiveUsers(lastLoginBefore: LocalDateTime): List<Int>
+    fun findInactiveUsers(cutoffDate: LocalDate): List<Int>
 
     /**
      * 알림 발송 상태를 업데이트합니다.
-     * @param userId 사용자 ID
-     * @param sentAt 발송 시각
-     * @param templateId 템플릿 ID
+     * @param id 알림 로그 ID
      * @param status 변경할 상태
      * @param fcmMessageId FCM 메시지 ID (선택)
      * @param errorMessage 에러 메시지 (선택)
      */
     fun updateNotificationStatus(
-        userId: Int,
-        sentAt: LocalDateTime,
-        templateId: Int,
+        id: Long,
         status: NotificationStatus,
-        fcmMessageId: String? = null,
-        errorMessage: String? = null,
+        fcmMessageId: String?,
+        errorMessage: String?,
     )
 
     /**
@@ -43,4 +39,11 @@ interface NotificationLogRepositoryCustom {
      * @return 해당 사용자의 알림 로그 목록
      */
     fun findByUserIdOrderByCreatedAtDesc(userId: Int): List<NotificationLog>
+
+    /**
+     * 특정 일수 이상 지난 알림 로그를 삭제합니다.
+     * @param cutoffDate 삭제할 기준 날짜
+     * @return 삭제된 알림 로그 수
+     */
+    fun deleteOldNotificationLogs(cutoffDate: LocalDate): Int
 }

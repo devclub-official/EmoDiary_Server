@@ -7,6 +7,7 @@ import com.fiveguysburger.emodiary.core.repository.NotificationLogRepository
 import com.fiveguysburger.emodiary.core.service.NotificationLogService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Service
@@ -53,32 +54,26 @@ class NotificationLogServiceImpl(
      */
     @Transactional(readOnly = true)
     override fun findInactiveUsers(): List<Int> {
-        val oneWeekAgo = LocalDateTime.now().minusWeeks(1)
+        val oneWeekAgo = LocalDate.now().minusWeeks(1)
         return notificationLogRepository.findInactiveUsers(oneWeekAgo)
     }
 
     /**
      * 알림 발송 상태를 업데이트합니다.
-     * @param userId 사용자 ID
-     * @param sentAt 발송 시각
-     * @param templateId 템플릿 ID
+     * @param id 알림 로그 ID
      * @param status 변경할 상태
      * @param fcmMessageId FCM 메시지 ID (선택)
      * @param errorMessage 에러 메시지 (선택)
      */
     @Transactional
     override fun updateNotificationStatus(
-        userId: Int,
-        sentAt: LocalDateTime,
-        templateId: Int,
+        id: Long,
         status: NotificationStatus,
         fcmMessageId: String?,
         errorMessage: String?,
     ) {
         notificationLogRepository.updateNotificationStatus(
-            userId = userId,
-            sentAt = sentAt,
-            templateId = templateId,
+            id = id,
             status = status,
             fcmMessageId = fcmMessageId,
             errorMessage = errorMessage,
@@ -93,4 +88,24 @@ class NotificationLogServiceImpl(
     @Transactional(readOnly = true)
     override fun findUserNotificationHistory(userId: Int): List<NotificationLog> =
         notificationLogRepository.findByUserIdOrderByCreatedAtDesc(userId)
+
+    /**
+     * 특정 일수 이상 지난 알림 로그를 삭제합니다.
+     * @param days 삭제할 기준 일수
+     * @return 삭제된 알림 로그 수
+     */
+    @Transactional
+    override fun deleteOldNotificationLogs(days: Int): Int {
+        val cutoffDate = LocalDate.now().minusDays(days.toLong())
+        return notificationLogRepository.deleteOldNotificationLogs(cutoffDate)
+    }
+
+    /**
+     * 특정 알림 로그를 삭제합니다.
+     * @param id 삭제할 알림 로그 ID
+     */
+    @Transactional
+    override fun deleteNotificationLog(id: Long) {
+        notificationLogRepository.deleteById(id)
+    }
 }
