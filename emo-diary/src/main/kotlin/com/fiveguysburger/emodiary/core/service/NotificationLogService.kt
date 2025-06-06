@@ -3,7 +3,6 @@ package com.fiveguysburger.emodiary.core.service
 import com.fiveguysburger.emodiary.core.entity.NotificationLog
 import com.fiveguysburger.emodiary.core.enums.NotificationStatus
 import com.fiveguysburger.emodiary.core.enums.NotificationType
-import java.time.LocalDateTime
 
 interface NotificationLogService {
     /**
@@ -34,17 +33,13 @@ interface NotificationLogService {
 
     /**
      * 알림 발송 상태를 업데이트합니다.
-     * @param userId 사용자 ID
-     * @param sentAt 발송 시각
-     * @param templateId 템플릿 ID
+     * @param id 알림 로그 ID
      * @param status 변경할 상태
      * @param fcmMessageId FCM 메시지 ID (선택)
      * @param errorMessage 에러 메시지 (선택)
      */
     fun updateNotificationStatus(
-        userId: Int,
-        sentAt: LocalDateTime,
-        templateId: Int,
+        id: Long,
         status: NotificationStatus,
         fcmMessageId: String? = null,
         errorMessage: String? = null,
@@ -56,4 +51,17 @@ interface NotificationLogService {
      * @return 해당 사용자의 알림 로그 목록
      */
     fun findUserNotificationHistory(userId: Int): List<NotificationLog>
+
+    /**
+     * 특정 일수 이상 지난 알림 로그를 삭제합니다.
+     * @param days 삭제할 기준 일수
+     * @return 삭제된 알림 로그 수
+     */
+    fun deleteOldNotificationLogs(days: Int): Int
+
+    /**
+     * 특정 알림 로그를 삭제합니다.
+     * @param id 삭제할 알림 로그 ID
+     */
+    fun deleteNotificationLog(id: Long)
 }

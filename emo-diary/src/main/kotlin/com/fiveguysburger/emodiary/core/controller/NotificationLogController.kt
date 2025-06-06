@@ -2,6 +2,7 @@
 
 package com.fiveguysburger.emodiary.core.controller
 
+import com.fiveguysburger.emodiary.core.dto.NotificationLogResponseDto
 import com.fiveguysburger.emodiary.core.entity.NotificationLog
 import com.fiveguysburger.emodiary.core.enums.NotificationStatus
 import com.fiveguysburger.emodiary.core.service.NotificationLogService
@@ -31,4 +32,42 @@ class NotificationLogController(
     fun findUserNotificationHistory(
         @PathVariable userId: Int,
     ): ResponseEntity<List<NotificationLog>> = ResponseEntity.ok(notificationLogService.findUserNotificationHistory(userId))
+
+    /**
+     * 특정 사용자의 알림 이력을 조회합니다.
+     * @param userId 사용자 ID
+     * @return 알림 로그 목록
+     */
+    @GetMapping("/users/{userId}")
+    fun getUserNotificationHistory(
+        @PathVariable userId: Int,
+    ): ResponseEntity<List<NotificationLogResponseDto>> {
+        val logs = notificationLogService.findUserNotificationHistory(userId)
+        return ResponseEntity.ok(logs.map { NotificationLogResponseDto.from(it) })
+    }
+
+    /**
+     * 특정 일수 이상 지난 알림 로그를 삭제합니다.
+     * @param days 삭제할 기준 일수
+     * @return 삭제된 알림 로그 수
+     */
+    @DeleteMapping("/old")
+    fun deleteOldNotificationLogs(
+        @RequestParam(defaultValue = "30") days: Int,
+    ): ResponseEntity<Map<String, Int>> {
+        val deletedCount = notificationLogService.deleteOldNotificationLogs(days)
+        return ResponseEntity.ok(mapOf("deletedCount" to deletedCount))
+    }
+
+    /**
+     * 특정 알림 로그를 삭제합니다.
+     * @param id 삭제할 알림 로그 ID
+     */
+    @DeleteMapping("/{id}")
+    fun deleteNotificationLog(
+        @PathVariable id: Long,
+    ): ResponseEntity<Unit> {
+        notificationLogService.deleteNotificationLog(id)
+        return ResponseEntity.noContent().build()
+    }
 }

@@ -2,12 +2,12 @@ package com.fiveguysburger.emodiary.core.repository.impl
 
 import com.fiveguysburger.emodiary.core.entity.NotificationLog
 import com.fiveguysburger.emodiary.core.entity.QNotificationLog
-import com.fiveguysburger.emodiary.core.entity.QUserLoginDetails
 import com.fiveguysburger.emodiary.core.enums.NotificationStatus
 import com.fiveguysburger.emodiary.core.repository.NotificationLogRepositoryCustom
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 @Repository
 class NotificationLogRepositoryImpl(
@@ -25,35 +25,36 @@ class NotificationLogRepositoryImpl(
             .fetch()
 
     /**
-     * 마지막 로그인 시각이 지정된 시각보다 이전인 사용자들을 조회합니다.
-     * @param lastLoginBefore 기준 시각
+     * 특정 날짜 이후에 알림이 없는 사용자들을 조회합니다.
+     * @param cutoffDate 기준 날짜
      * @return 장기 미접속 사용자 ID 목록
      */
-    override fun findInactiveUsers(lastLoginBefore: LocalDateTime): List<Int> {
-        val oneWeekAgo = LocalDateTime.now().minusWeeks(1)
-        return queryFactory
-            .select(QUserLoginDetails.userLoginDetails.userId)
-            .from(QUserLoginDetails.userLoginDetails)
+    override fun findInactiveUsers(cutoffDate: LocalDate): List<Int> =
+        queryFactory
+            .select(QNotificationLog.notificationLog.userId)
+            .from(QNotificationLog.notificationLog)
             .where(
-                QUserLoginDetails.userLoginDetails.loginAt.lt(oneWeekAgo),
+                QNotificationLog.notificationLog.sentAt.before(cutoffDate.atStartOfDay()),
+                QNotificationLog.notificationLog.userId.notIn(
+                    queryFactory
+                        .select(QNotificationLog.notificationLog.userId)
+                        .from(QNotificationLog.notificationLog)
+                        .where(QNotificationLog.notificationLog.sentAt.after(cutoffDate.atStartOfDay())),
+                ),
             )
-            .groupBy(QUserLoginDetails.userLoginDetails.userId)
+            .distinct()
             .fetch()
-    }
 
     /**
      * 알림 발송 상태를 업데이트합니다.
-     * @param userId 사용자 ID
-     * @param sentAt 발송 시각
-     * @param templateId 템플릿 ID
+     * @param id 알림 로그 ID
      * @param status 변경할 상태
      * @param fcmMessageId FCM 메시지 ID (선택)
      * @param errorMessage 에러 메시지 (선택)
      */
+    @Transactional
     override fun updateNotificationStatus(
-        userId: Int,
-        sentAt: LocalDateTime,
-        templateId: Int,
+        id: Long,
         status: NotificationStatus,
         fcmMessageId: String?,
         errorMessage: String?,
@@ -63,11 +64,8 @@ class NotificationLogRepositoryImpl(
             .set(QNotificationLog.notificationLog.notificationStatus, status)
             .set(QNotificationLog.notificationLog.fcmMessageId, fcmMessageId)
             .set(QNotificationLog.notificationLog.errorMessage, errorMessage)
-            .where(
-                QNotificationLog.notificationLog.userId.eq(userId),
-                QNotificationLog.notificationLog.sentAt.eq(sentAt),
-                QNotificationLog.notificationLog.templateId.eq(templateId),
-            ).execute()
+            .where(QNotificationLog.notificationLog.id.eq(id))
+            .execute()
     }
 
     /**
@@ -81,4 +79,17 @@ class NotificationLogRepositoryImpl(
             .where(QNotificationLog.notificationLog.userId.eq(userId))
             .orderBy(QNotificationLog.notificationLog.createdAt.desc())
             .fetch()
+
+    /**
+     * 특정 날짜 이전의 알림 로그를 삭제합니다.
+     * @param cutoffDate 삭제할 기준 날짜
+     * @return 삭제된 알림 로그 수
+     */
+    @Transactional
+    override fun deleteOldNotificationLogs(cutoffDate: LocalDate): Int =
+        queryFactory
+            .delete(QNotificationLog.notificationLog)
+            .where(QNotificationLog.notificationLog.sentAt.before(cutoffDate.atStartOfDay()))
+            .execute()
+            .toInt()
 }
