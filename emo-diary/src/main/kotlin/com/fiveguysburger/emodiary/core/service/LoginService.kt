@@ -8,4 +8,8 @@ interface LoginService {
     fun loginWithKakao(code: String): TokenResponse
 
     fun logout(token: String): Boolean
+
+    fun generateGoogleAuthUrl(): String
+
+    fun generateKakaoAuthUrl(): String
 }

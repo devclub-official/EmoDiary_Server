@@ -48,6 +48,13 @@ class LoginController(
         return ResponseEntity.ok(token)
     }
 
+    // 구글 로그인 URL 생성
+    @GetMapping("/google/url")
+    fun getGoogleLoginUrl(): ResponseEntity<Map<String, String>> {
+        val googleAuthUrl = loginService.generateGoogleAuthUrl()
+        return ResponseEntity.ok(mapOf("authUrl" to googleAuthUrl))
+    }
+
     @Operation(
         summary = "카카오 로그인 콜백",
         description = "카카오 로그인 인증 코드로 사용자 인증 및 JWT 토큰 발급",

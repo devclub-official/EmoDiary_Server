@@ -22,6 +22,8 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import java.net.URLEncoder
+import java.util.*
 
 @Service
 class LoginServiceImpl(
@@ -66,6 +68,39 @@ class LoginServiceImpl(
 
     @Value("\${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private lateinit var kakaoRedirectUri: String
+
+    // Google OAuth2 상수
+    private val googleScope = "openid email profile"
+    private val responseType = "code"
+    private val accessType = "offline"
+
+    /**
+     * 구글 OAuth2 인증 URL 생성
+     */
+    override fun generateGoogleAuthUrl(): String {
+        val state = generateRandomState() // CSRF 보호를 위한 state 값
+
+        return "https://accounts.google.com/o/oauth2/v2/auth?" +
+            "client_id=${URLEncoder.encode(googleClientId, "UTF-8")}&" +
+            "redirect_uri=${URLEncoder.encode(googleRedirectUri, "UTF-8")}&" +
+            "response_type=$responseType&" +
+            "scope=${URLEncoder.encode(googleScope, "UTF-8")}&"
+    }
+
+    /**
+     * 카카오 OAuth2 인증 URL 생성
+     */
+    override fun generateKakaoAuthUrl(): String {
+        val state = generateRandomState()
+
+        return "https://kauth.kakao.com/oauth/authorize?" +
+            "client_id=${URLEncoder.encode(kakaoClientId, "UTF-8")}&" +
+            "redirect_uri=${URLEncoder.encode(kakaoRedirectUri, "UTF-8")}&" +
+            "response_type=$responseType&" +
+            "state=${URLEncoder.encode(state, "UTF-8")}"
+    }
+
+    private fun generateRandomState(): String = UUID.randomUUID().toString()
 
     override fun loginWithGoogle(code: String): TokenResponse {
         val tokenResponse =
