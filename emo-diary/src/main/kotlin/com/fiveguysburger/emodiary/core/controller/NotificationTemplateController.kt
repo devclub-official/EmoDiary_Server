@@ -2,8 +2,8 @@
 
 package com.fiveguysburger.emodiary.core.controller
 
-import com.fiveguysburger.emodiary.core.dto.NotificationTemplateRequestDto
-import com.fiveguysburger.emodiary.core.dto.NotificationTemplateResponseDto
+import com.fiveguysburger.emodiary.core.dto.request.NotificationTemplateRequestDto
+import com.fiveguysburger.emodiary.core.dto.response.NotificationTemplateResponseDto
 import com.fiveguysburger.emodiary.core.entity.NotificationTemplate
 import com.fiveguysburger.emodiary.core.service.NotificationTemplateService
 import io.swagger.v3.oas.annotations.Operation

@@ -1,4 +1,4 @@
-package com.fiveguysburger.emodiary.core.dto
+package com.fiveguysburger.emodiary.core.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 
