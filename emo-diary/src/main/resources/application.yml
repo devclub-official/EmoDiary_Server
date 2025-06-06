@@ -3,9 +3,9 @@ spring:
     name: EmoDiary
   # 개발용 설정
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:emodiary}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:password}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -22,15 +22,20 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            #redirect-uri: "http://54.180.30.13:8080/api/users/login/google"
-            redirect-uri: "http://localhost:8080/api/login/google"
+            # PRD
+            redirect-uri: "http://emodiary.duckdns.org:8080/api/login/google"
+            # DEV
+            # redirect-uri: "http://localhost:8080/api/login/google"
             scope:
               - email
               - profile
           kakao:
             client-id: ${KAKAO_CLIENT_ID}  # REST API 키
             client-secret: ${KAKAO_CLIENT_SECRET}  # Client Secret 키
-            redirect-uri: http://localhost:8080/api/users/login/kakao
+            # PRD
+            redirect-uri: "http://emodiary.duckdns.org:8080/api/login/kakao"
+            # DEV
+            # redirect-uri: http://localhost:8080/api/users/login/kakao
             authorization-grant-type: authorization_code
             client-authentication-method: POST
             client-name: Kakao
@@ -49,11 +54,11 @@ spring:
             user-name-attribute: id
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
-      database: ${REDIS_DATABASE:0}
-      timeout: ${REDIS_TIMEOUT:60000}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      database: ${REDIS_DATABASE}
+      timeout: ${REDIS_TIMEOUT}
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -68,3 +73,4 @@ springdoc:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000  # 24시간
+  refresh-expiration: 604800000 # 24시간
