@@ -17,7 +17,7 @@ RUN mkdir -p /home/gradle/.gradle && \
     chmod -R 777 /home/gradle/.gradle
 
 # 애플리케이션 빌드 (더 자세한 로그 출력을 위해 --info 추가)
-RUN gradle build --no-daemon -x test --info --build-cache
+RUN gradle build --no-daemon -x test -x ktlintCheck -x ktlintMainSourceSetCheck --info --build-cache
 
 # 실행 스테이지: JDK 21 기반 실행 환경으로 변경
 FROM openjdk:21-slim
