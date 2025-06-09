@@ -1,6 +1,7 @@
 package com.fiveguysburger.emodiary.core.service.impl
 
 import com.fiveguysburger.emodiary.core.dto.FcmMessageDto
+import com.fiveguysburger.emodiary.core.entity.NotificationLog
 import com.fiveguysburger.emodiary.core.enums.NotificationStatus
 import com.fiveguysburger.emodiary.core.service.FcmException
 import com.fiveguysburger.emodiary.core.service.FcmService
@@ -26,6 +27,7 @@ class FcmServiceImpl(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun sendMessage(message: FcmMessageDto): String {
+        var notificationLog: NotificationLog? = null
         try {
             logger.info("FCM 메시지 전송 시작: {}", message)
 
@@ -35,7 +37,7 @@ class FcmServiceImpl(
                     ?: throw FcmException("템플릿을 찾을 수 없습니다: ${message.notificationType}")
 
             // 2. 알림 로그 생성 (PENDING 상태로 시작)
-            val notificationLog =
+            notificationLog =
                 notificationLogService.createNotificationLog(
                     userId = message.userId,
                     templateId = template.id.toInt(),
@@ -44,22 +46,21 @@ class FcmServiceImpl(
 
             // 3. FCM 메시지 생성 및 전송
             val fcmMessage =
-                Message.builder()
+                Message
+                    .builder()
                     .setNotification(
-                        Notification.builder()
+                        Notification
+                            .builder()
                             .setTitle(template.title)
                             .setBody(template.content)
                             .build(),
-                    )
-                    .setToken(message.token)
+                    ).setToken(message.token)
                     .putAllData(message.data)
                     .build()
 
             // 4. 전송 중 상태로 업데이트
             notificationLogService.updateNotificationStatus(
-                userId = message.userId,
-                sentAt = notificationLog.sentAt,
-                templateId = notificationLog.templateId,
+                id = notificationLog.id,
                 status = NotificationStatus.SENDING,
             )
 
@@ -68,9 +69,7 @@ class FcmServiceImpl(
 
             // 5. 전송 완료 상태로 업데이트
             notificationLogService.updateNotificationStatus(
-                userId = message.userId,
-                sentAt = notificationLog.sentAt,
-                templateId = notificationLog.templateId,
+                id = notificationLog.id,
                 status = NotificationStatus.SENT,
                 fcmMessageId = messageId,
             )
@@ -80,13 +79,13 @@ class FcmServiceImpl(
             logger.error("FCM 메시지 전송 실패: {}", e.message, e)
 
             // 6. 실패 상태로 업데이트
-            notificationLogService.updateNotificationStatus(
-                userId = message.userId,
-                sentAt = message.sentAt,
-                templateId = message.notificationType.value,
-                status = NotificationStatus.FAILED,
-                errorMessage = e.message,
-            )
+            notificationLog?.let {
+                notificationLogService.updateNotificationStatus(
+                    id = it.id,
+                    status = NotificationStatus.FAILED,
+                    errorMessage = e.message,
+                )
+            }
 
             throw FcmException("FCM 메시지 전송 실패: ${e.message}", e)
         }
