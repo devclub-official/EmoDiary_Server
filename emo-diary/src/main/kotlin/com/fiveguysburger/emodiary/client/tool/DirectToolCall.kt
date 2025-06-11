@@ -24,7 +24,7 @@ class DirectToolCall(
                 "options" to options?.let { objectMapper.writeValueAsString(it) },
             )
 
-        return callTool("insert-document", params)
+        return callTool("spring_ai_mcp_client_mongodb_lens_insert_document", params)
     }
 
     /**
@@ -46,7 +46,7 @@ class DirectToolCall(
                 "sort" to sort?.let { objectMapper.writeValueAsString(it) },
             )
 
-        return callTool("find-documents", params)
+        return callTool("spring_ai_mcp_client_mongodb_lens_find_documents", params)
     }
 
     /**
@@ -66,7 +66,7 @@ class DirectToolCall(
                 "options" to options?.let { objectMapper.writeValueAsString(it) },
             )
 
-        return callTool("update-document", params)
+        return callTool("spring_ai_mcp_client_mongodb_lens_update_document", params)
     }
 
     /**
@@ -82,7 +82,7 @@ class DirectToolCall(
                 "filter" to objectMapper.writeValueAsString(filter),
             )
 
-        return callTool("delete-document", params)
+        return callTool("spring_ai_mcp_client_mongodb_lens_delete_document", params)
     }
 
     /**
@@ -93,8 +93,7 @@ class DirectToolCall(
         params: Map<String, Any>,
     ): String {
         val toolCallback =
-            toolCallbackProvider.getToolCallbacks()
-                .find { it.toolDefinition.name() == toolName }
+            toolCallbackProvider.getToolCallbacks().find { it.toolDefinition.name() == toolName }
                 ?: throw IllegalArgumentException("Tool '$toolName' not found")
 
         val jsonParams = objectMapper.writeValueAsString(params)
