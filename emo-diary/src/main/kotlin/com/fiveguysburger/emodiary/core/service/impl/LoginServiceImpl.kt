@@ -23,7 +23,7 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.net.URLEncoder
-import java.util.*
+import java.util.UUID
 
 @Service
 class LoginServiceImpl(
