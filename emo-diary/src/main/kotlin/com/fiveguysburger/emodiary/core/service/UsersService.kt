@@ -45,7 +45,7 @@ interface UsersService {
      */
     fun updateAlarmStatus(
         userId: Int,
-        alarmStatus: Boolean,
+        alarmStatus: String,
     ): Users
 
     /**
