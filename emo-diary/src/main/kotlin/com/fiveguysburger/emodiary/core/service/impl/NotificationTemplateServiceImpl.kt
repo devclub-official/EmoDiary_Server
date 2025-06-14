@@ -1,7 +1,7 @@
 package com.fiveguysburger.emodiary.core.service.impl
 
-import com.fiveguysburger.emodiary.core.dto.NotificationTemplateRequestDto
-import com.fiveguysburger.emodiary.core.dto.NotificationTemplateResponseDto
+import com.fiveguysburger.emodiary.core.dto.request.NotificationTemplateRequestDto
+import com.fiveguysburger.emodiary.core.dto.response.NotificationTemplateResponseDto
 import com.fiveguysburger.emodiary.core.entity.NotificationTemplate
 import com.fiveguysburger.emodiary.core.repository.NotificationTemplateRepository
 import com.fiveguysburger.emodiary.core.service.NotificationTemplateService
@@ -25,7 +25,8 @@ class NotificationTemplateServiceImpl(
 
     override fun getTemplate(id: Long): NotificationTemplateResponseDto {
         val template =
-            notificationTemplateRepository.findById(id)
+            notificationTemplateRepository
+                .findById(id)
                 .orElseThrow { NoSuchElementException("템플릿을 찾을 수 없습니다: $id") }
         return template.toResponseDto()
     }
@@ -40,20 +41,23 @@ class NotificationTemplateServiceImpl(
         request: NotificationTemplateRequestDto,
     ): NotificationTemplateResponseDto {
         val existingTemplate =
-            notificationTemplateRepository.findById(id)
+            notificationTemplateRepository
+                .findById(id)
                 .orElseThrow { NoSuchElementException("템플릿을 찾을 수 없습니다: $id") }
 
-        return notificationTemplateRepository.save(
-            existingTemplate.copy(
-                title = request.title,
-                content = request.content,
-            ),
-        ).toResponseDto()
+        return notificationTemplateRepository
+            .save(
+                existingTemplate.copy(
+                    title = request.title,
+                    content = request.content,
+                ),
+            ).toResponseDto()
     }
 
     override fun deactivateTemplate(id: Long) {
         val template =
-            notificationTemplateRepository.findById(id)
+            notificationTemplateRepository
+                .findById(id)
                 .orElseThrow { NoSuchElementException("템플릿을 찾을 수 없습니다: $id") }
 
         notificationTemplateRepository.save(template.copy(isActive = false))

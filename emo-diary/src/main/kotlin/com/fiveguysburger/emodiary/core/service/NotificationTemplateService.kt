@@ -1,7 +1,7 @@
 package com.fiveguysburger.emodiary.core.service
 
-import com.fiveguysburger.emodiary.core.dto.NotificationTemplateRequestDto
-import com.fiveguysburger.emodiary.core.dto.NotificationTemplateResponseDto
+import com.fiveguysburger.emodiary.core.dto.request.NotificationTemplateRequestDto
+import com.fiveguysburger.emodiary.core.dto.response.NotificationTemplateResponseDto
 import com.fiveguysburger.emodiary.core.entity.NotificationTemplate
 
 interface NotificationTemplateService {
