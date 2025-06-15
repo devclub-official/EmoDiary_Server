@@ -81,6 +81,22 @@ class NotificationLogRepositoryImpl(
             .fetch()
 
     /**
+     * 사용자 ID와 템플릿 ID로 알림 로그를 생성일시 기준 내림차순으로 조회합니다.
+     * @param userId 사용자 ID
+     * @param templateId 템플릿 ID
+     * @return 해당 조건의 알림 로그 목록
+     */
+    override fun findByUserIdAndTemplateIdOrderByCreatedAtDesc(userId: Int, templateId: Int): List<NotificationLog> =
+        queryFactory
+            .selectFrom(QNotificationLog.notificationLog)
+            .where(
+                QNotificationLog.notificationLog.userId.eq(userId),
+                QNotificationLog.notificationLog.templateId.eq(templateId),
+            )
+            .orderBy(QNotificationLog.notificationLog.createdAt.desc())
+            .fetch()
+
+    /**
      * 특정 날짜 이전의 알림 로그를 삭제합니다.
      * @param cutoffDate 삭제할 기준 날짜
      * @return 삭제된 알림 로그 수

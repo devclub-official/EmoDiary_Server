@@ -19,6 +19,17 @@ interface NotificationLogService {
     ): NotificationLog
 
     /**
+     * 사용자 ID와 템플릿 ID로 알림 로그를 조회합니다.
+     * @param userId 사용자 ID
+     * @param templateId 템플릿 ID
+     * @return 조회된 알림 로그, 없으면 null
+     */
+    fun findByUserIdAndTemplateId(
+        userId: Int,
+        templateId: Int,
+    ): NotificationLog?
+
+    /**
      * 특정 상태의 알림들을 조회합니다.
      * @param status 조회할 알림 상태
      * @return 해당 상태의 알림 로그 목록

@@ -58,6 +58,20 @@ spring:
     password: ${REDIS_PASSWORD}
     database: ${REDIS_DATABASE}
     timeout: ${REDIS_TIMEOUT}
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          max-interval: 10000
+          multiplier: 2.0
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -73,3 +87,9 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000  # 24시간
   refresh-expiration: 604800000 # 24시간
+
+rabbitmq:
+  notification:
+    exchange: notification.exchange
+    queue: notification.queue
+    routing-key: notification.routing.key
