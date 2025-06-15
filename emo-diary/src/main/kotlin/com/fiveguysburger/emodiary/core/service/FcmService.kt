@@ -1,9 +1,7 @@
 package com.fiveguysburger.emodiary.core.service
 
 import com.fiveguysburger.emodiary.core.dto.FcmMessageDto
-import kotlinx.coroutines.flow.Flow
-
-class FcmException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
+import com.fiveguysburger.emodiary.core.dto.NotificationMessageDto
 
 interface FcmService {
     /**
