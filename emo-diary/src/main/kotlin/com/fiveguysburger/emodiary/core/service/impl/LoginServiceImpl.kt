@@ -262,7 +262,7 @@ class LoginServiceImpl(
                 val newUser =
                     Users().apply {
                         this.email = email
-                        this.alarmStatus = false
+                        this.alarmStatus = "N"
                     }
                 userRepository.save(newUser)
             }
