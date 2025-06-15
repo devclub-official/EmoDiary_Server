@@ -1,4 +1,4 @@
-package com.fiveguysburger.emodiary.core.dto
+package com.fiveguysburger.emodiary.core.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
