@@ -28,7 +28,7 @@ class UsersServiceImpl(
         val newUser =
             Users().apply {
                 this.email = email
-                this.alarmStatus = false // 기본값으로 알람 비활성화
+                this.alarmStatus = "N" // 기본값으로 알람 비활성화
             }
 
         val savedUser = usersRepository.save(newUser)
@@ -78,7 +78,7 @@ class UsersServiceImpl(
 
     override fun updateAlarmStatus(
         userId: Int,
-        alarmStatus: Boolean,
+        alarmStatus: String,
     ): Users {
         val user =
             findUserById(userId)
