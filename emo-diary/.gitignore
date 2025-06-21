@@ -38,3 +38,7 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+
+!**/src/main/resources/application.yml
+.idea/
