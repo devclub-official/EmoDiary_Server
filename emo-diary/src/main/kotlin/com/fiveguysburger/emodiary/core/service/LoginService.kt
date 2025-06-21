@@ -6,4 +6,10 @@ interface LoginService {
     fun loginWithGoogle(code: String): TokenResponse
 
     fun loginWithKakao(code: String): TokenResponse
+
+    fun logout(token: String): Boolean
+
+    fun generateGoogleAuthUrl(): String
+
+    fun generateKakaoAuthUrl(): String
 }

@@ -22,8 +22,15 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-batch")
+
+    // Firebase Admin SDK
+    implementation("com.google.firebase:firebase-admin:9.4.3")
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // SNS 로그인을 위한 라이브러리
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -76,4 +83,27 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// QueryDSL 설정
+kapt {
+    keepJavacAnnotationProcessors = true
+}
+
+// QueryDSL Q클래스 생성 위치 설정
+sourceSets {
+    main {
+        java {
+            srcDirs("$buildDir/generated/source/kapt/main")
+        }
+    }
+}
+tasks.named("runKtlintCheckOverMainSourceSet") {
+    mustRunAfter("kaptKotlin")
+    mustRunAfter("kaptGenerateStubsKotlin")
+}
+
+tasks.named("runKtlintCheckOverTestSourceSet") {
+    mustRunAfter("kaptTestKotlin")
+    mustRunAfter("kaptGenerateStubsTestKotlin")
 }
