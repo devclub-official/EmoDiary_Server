@@ -41,7 +41,7 @@ class DirectToolCall(
             buildParams(
                 "collection" to collection,
                 "filter" to objectMapper.writeValueAsString(filter),
-                "limit" to limit.toString(),
+                "limit" to limit,
                 "projection" to projection?.let { objectMapper.writeValueAsString(it) },
                 "sort" to sort?.let { objectMapper.writeValueAsString(it) },
             )

@@ -5,6 +5,7 @@ import com.fiveguysburger.emodiary.core.dto.ChatMessageResponse
 import com.fiveguysburger.emodiary.core.service.ChatRoomService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -39,10 +40,23 @@ class DiaryController(
 
         return ResponseEntity.ok(
             ChatMessageResponse(
-                chatRoomId = chatRoomId,
+                dailyChatId = chatRoomId,
                 message = llmResponse,
                 sender = "LLM",
             ),
+        )
+    }
+
+    @GetMapping("/chatrooms/{chatroomId}")
+    fun getChatRoomMessages(
+        @AuthenticationPrincipal userId: String,
+        @PathVariable("chatroomId") chatRoomId: String,
+    ) : ResponseEntity<String> {
+        return ResponseEntity.ok(
+            chatRoomService.getAllMessages(
+                chatRoomId = chatRoomId,
+                userId = userId
+            )
         )
     }
 }

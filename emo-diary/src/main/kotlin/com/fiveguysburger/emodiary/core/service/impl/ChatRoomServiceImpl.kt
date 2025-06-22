@@ -1,5 +1,6 @@
 package com.fiveguysburger.emodiary.core.service.impl
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fiveguysburger.emodiary.core.service.ChatRoomService
 import com.fiveguysburger.emodiary.mcp.client.tool.DirectToolCall
 import org.springframework.ai.chat.client.ChatClient
@@ -12,6 +13,7 @@ import java.time.Instant
 class ChatRoomServiceImpl(
     chatClientBuilder: ChatClient.Builder,
     private val directToolCall: DirectToolCall,
+    private val objectMapper: ObjectMapper
 ) : ChatRoomService {
 
     private val chatClient: ChatClient = chatClientBuilder.build()
@@ -66,5 +68,21 @@ class ChatRoomServiceImpl(
         directToolCall.insertDocument("messages", llmDocument, null)
 
         return llmResponse
+    }
+
+    override fun getAllMessages(chatroomId: String, userId: String): String {
+        require(chatroomId.isNotBlank()) { "Chatroom ID cannot be null or blank." }
+        require(userId.isNotBlank()) { "User ID cannot be null or blank." }
+
+        val filter = mapOf("dailyChatId" to chatroomId)
+        val sort = mapOf("createdAt" to 1)
+
+        return directToolCall.findDocuments(
+            collection = "messages",
+            filter = filter,
+            limit = 100, // 한 번에 가져올 메시지 수를 지정합니다. 기본값(10)보다 넉넉하게 설정하는 것이 좋습니다.
+            null,
+            sort = sort
+        )
     }
 }
