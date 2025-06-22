@@ -23,7 +23,7 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             # PRD
-            redirect-uri: "http://emodiary.duckdns.org:8080/api/login/google"
+            redirect-uri: "https://emodiary-client.vercel.app/auth/callback"
             # DEV
             # redirect-uri: "http://localhost:8080/api/login/google"
             scope:
