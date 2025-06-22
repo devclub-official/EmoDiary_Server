@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface NotificationLogRepository :
-    JpaRepository<NotificationLog, Long>,
+    JpaRepository<NotificationLog, String>,
     NotificationLogRepositoryCustom

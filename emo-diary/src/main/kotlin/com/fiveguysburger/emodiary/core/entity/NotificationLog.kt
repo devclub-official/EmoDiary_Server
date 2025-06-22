@@ -8,13 +8,14 @@ import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
 import java.time.LocalDateTime
 import java.util.Objects
+import java.util.UUID
 
 @Entity
 @Table(name = "notification_logs")
 data class NotificationLog(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    @Column(name = "id", length = 36)
+    val id: String = UUID.randomUUID().toString(),
     @Column(name = "user_id")
     val userId: Int,
     @Column(name = "sent_at")
