@@ -34,5 +34,5 @@ class Users {
     var updatedAt: LocalDateTime = LocalDateTime.now()
 
     @Column(name = "alarm_status", nullable = false)
-    var alarmStatus: Boolean = false
+    var alarmStatus: String = "N"
 }
