@@ -8,4 +8,6 @@ interface ChatRoomService {
         userId: String,
         message: String,
     ): String
+
+    fun getAllMessages(chatRoomId: String, userId: String): String
 }
