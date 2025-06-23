@@ -10,22 +10,16 @@ import java.time.Instant
 
 @Service
 class ChatRoomServiceImpl(
-    chatClientBuilder: ChatClient.Builder,
     private val directToolCall: DirectToolCall,
 ) : ChatRoomService {
-
-    private val chatClient: ChatClient = chatClientBuilder.build()
-
-    @Transactional
     override fun createChatRoom(userId: String): String {
-        require(userId.isNotBlank()) { "User ID cannot be null or blank." }
         val today = Instant.now()
-
         val document =
             mapOf(
                 "userId" to userId,
                 "date" to today,
             )
+            
         return directToolCall.insertDocument("daily_chats", document)
     }
 
@@ -66,5 +60,10 @@ class ChatRoomServiceImpl(
         directToolCall.insertDocument("messages", llmDocument, null)
 
         return llmResponse
+                "userId" to userId.toInt(),
+                "date" to today,
+            )
+            
+        return directToolCall.insertDocument("chatrooms", document)
     }
 }

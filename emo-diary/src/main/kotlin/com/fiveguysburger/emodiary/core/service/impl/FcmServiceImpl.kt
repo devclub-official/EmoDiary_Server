@@ -31,15 +31,7 @@ class FcmServiceImpl(
                 notificationTemplateService.getTemplateByType(message.notificationType.value)
                     ?: throw FcmException("템플릿을 찾을 수 없습니다: ${message.notificationType}")
 
-            // 2. 알림 로그 생성 (PENDING 상태로 시작)
-            val notificationLog =
-                notificationLogService.createNotificationLog(
-                    userId = message.userId,
-                    templateId = template.id.toInt(),
-                    notificationType = message.notificationType,
-                )
-
-            // 3. RabbitMQ를 통해 메시지 전송
+            // 2. RabbitMQ를 통해 메시지 전송
             val notificationMessage =
                 NotificationMessageDto(
                     userId = message.userId,
