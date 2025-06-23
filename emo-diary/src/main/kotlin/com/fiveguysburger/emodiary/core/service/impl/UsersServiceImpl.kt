@@ -102,7 +102,7 @@ class UsersServiceImpl(
         return queryFactory
             .select(userLoginDetails.userId)
             .from(userLoginDetails)
-            .having(userLoginDetails.loginAt.max().lt(cutoffDate))
+            .where(userLoginDetails.loginAt.lt(cutoffDate))
             .fetch()
             .mapNotNull { it }
     }
