@@ -2,6 +2,7 @@ package com.fiveguysburger.emodiary.mcp.client.tool
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider
+import org.springframework.ai.tool.annotation.Tool
 import org.springframework.stereotype.Component
 
 @Component
@@ -12,6 +13,7 @@ class DirectToolCall(
     /**
      * 문서 삽입 (단일) - Spring AI 표준 타입 사용
      */
+    @Tool
     fun insertDocument(
         collection: String,
         document: Map<String, Any>,
@@ -46,43 +48,7 @@ class DirectToolCall(
                 "sort" to sort?.let { objectMapper.writeValueAsString(it) },
             )
 
-        return callTool("spring_ai_mcp_client_mongodb_lens_find_documents", params)
-    }
-
-    /**
-     * 문서 업데이트
-     */
-    fun updateDocument(
-        collection: String,
-        filter: Map<String, Any>,
-        update: Map<String, Any>,
-        options: Map<String, Any>? = null,
-    ): String {
-        val params =
-            buildParams(
-                "collection" to collection,
-                "filter" to objectMapper.writeValueAsString(filter),
-                "update" to objectMapper.writeValueAsString(update),
-                "options" to options?.let { objectMapper.writeValueAsString(it) },
-            )
-
-        return callTool("spring_ai_mcp_client_mongodb_lens_update_document", params)
-    }
-
-    /**
-     * 문서 삭제
-     */
-    fun deleteDocument(
-        collection: String,
-        filter: Map<String, Any>,
-    ): String {
-        val params =
-            buildParams(
-                "collection" to collection,
-                "filter" to objectMapper.writeValueAsString(filter),
-            )
-
-        return callTool("spring_ai_mcp_client_mongodb_lens_delete_document", params)
+        return  callTool("spring_ai_mcp_client_mongodb_lens_find_documents", params)
     }
 
     /**
