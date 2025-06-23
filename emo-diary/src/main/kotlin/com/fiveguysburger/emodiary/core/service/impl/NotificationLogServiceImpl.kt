@@ -82,7 +82,7 @@ class NotificationLogServiceImpl(
      */
     @Transactional
     override fun updateNotificationStatus(
-        id: Long,
+        id: String,
         status: NotificationStatus,
         fcmMessageId: String?,
         errorMessage: String?,
@@ -120,7 +120,7 @@ class NotificationLogServiceImpl(
      * @param id 삭제할 알림 로그 ID
      */
     @Transactional
-    override fun deleteNotificationLog(id: Long) {
+    override fun deleteNotificationLog(id: String) {
         notificationLogRepository.deleteById(id)
     }
 }
