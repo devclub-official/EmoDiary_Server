@@ -13,18 +13,15 @@ import java.time.Instant
 
 @Service
 class ChatRoomServiceImpl(
-    chatClientBuilder: ChatClient.Builder,
     private val directToolCall: DirectToolCall,
     private val objectMapper: ObjectMapper
 ) : ChatRoomService {
-
-    private val chatClient: ChatClient = chatClientBuilder.build()
-
+  
     @Transactional
     override fun createChatRoom(userId: String): ApiResponse<CreateDiaryRoomResponse> {
         require(userId.isNotBlank()) { "User ID cannot be null or blank." }
+ 
         val today = Instant.now()
-
         val document =
             mapOf(
                 "userId" to userId,
@@ -46,6 +43,8 @@ class ChatRoomServiceImpl(
         } else {
             ApiResponse.error(message = "채팅방 생성 후 ID를 파싱하는데 실패했습니다.")
         }
+   
+        return directToolCall.insertDocument("daily_chats", document)
     }
 
     @Transactional
@@ -157,5 +156,12 @@ class ChatRoomServiceImpl(
             data = AnalysisResponse(analysis = chatResponse),
             message = "일기 분석에 성공하였습니다."
         )
+
+        return llmResponse
+                "userId" to userId.toInt(),
+                "date" to today,
+            )
+            
+        return directToolCall.insertDocument("chatrooms", document)
     }
 }

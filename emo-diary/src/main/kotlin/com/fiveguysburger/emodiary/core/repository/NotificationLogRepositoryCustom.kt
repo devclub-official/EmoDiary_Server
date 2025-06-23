@@ -27,7 +27,7 @@ interface NotificationLogRepositoryCustom {
      * @param errorMessage 에러 메시지 (선택)
      */
     fun updateNotificationStatus(
-        id: Long,
+        id: String,
         status: NotificationStatus,
         fcmMessageId: String?,
         errorMessage: String?,
@@ -46,7 +46,10 @@ interface NotificationLogRepositoryCustom {
      * @param templateId 템플릿 ID
      * @return 해당 조건의 알림 로그 목록
      */
-    fun findByUserIdAndTemplateIdOrderByCreatedAtDesc(userId: Int, templateId: Int): List<NotificationLog>
+    fun findByUserIdAndTemplateIdOrderByCreatedAtDesc(
+        userId: Int,
+        templateId: Int,
+    ): List<NotificationLog>
 
     /**
      * 특정 일수 이상 지난 알림 로그를 삭제합니다.

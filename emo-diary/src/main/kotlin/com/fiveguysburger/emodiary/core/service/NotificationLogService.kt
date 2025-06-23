@@ -50,7 +50,7 @@ interface NotificationLogService {
      * @param errorMessage 에러 메시지 (선택)
      */
     fun updateNotificationStatus(
-        id: Long,
+        id: String,
         status: NotificationStatus,
         fcmMessageId: String? = null,
         errorMessage: String? = null,
@@ -74,5 +74,5 @@ interface NotificationLogService {
      * 특정 알림 로그를 삭제합니다.
      * @param id 삭제할 알림 로그 ID
      */
-    fun deleteNotificationLog(id: Long)
+    fun deleteNotificationLog(id: String)
 }

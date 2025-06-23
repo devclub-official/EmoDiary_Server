@@ -65,7 +65,7 @@ class NotificationLogController(
      */
     @DeleteMapping("/{id}")
     fun deleteNotificationLog(
-        @PathVariable id: Long,
+        @PathVariable id: String,
     ): ResponseEntity<Unit> {
         notificationLogService.deleteNotificationLog(id)
         return ResponseEntity.noContent().build()

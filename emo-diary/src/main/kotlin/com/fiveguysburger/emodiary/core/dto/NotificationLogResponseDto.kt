@@ -5,7 +5,7 @@ import com.fiveguysburger.emodiary.core.enums.NotificationStatus
 import com.fiveguysburger.emodiary.core.enums.NotificationType
 
 data class NotificationLogResponseDto(
-    val id: Long,
+    val id: String,
     val userId: Int,
     val sentAt: String,
     val templateId: Int,

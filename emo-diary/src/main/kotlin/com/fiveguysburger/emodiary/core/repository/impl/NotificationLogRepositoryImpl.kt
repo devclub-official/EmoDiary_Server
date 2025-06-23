@@ -41,8 +41,7 @@ class NotificationLogRepositoryImpl(
                         .from(QNotificationLog.notificationLog)
                         .where(QNotificationLog.notificationLog.sentAt.after(cutoffDate.atStartOfDay())),
                 ),
-            )
-            .distinct()
+            ).distinct()
             .fetch()
 
     /**
@@ -54,7 +53,7 @@ class NotificationLogRepositoryImpl(
      */
     @Transactional
     override fun updateNotificationStatus(
-        id: Long,
+        id: String,
         status: NotificationStatus,
         fcmMessageId: String?,
         errorMessage: String?,
@@ -86,14 +85,16 @@ class NotificationLogRepositoryImpl(
      * @param templateId 템플릿 ID
      * @return 해당 조건의 알림 로그 목록
      */
-    override fun findByUserIdAndTemplateIdOrderByCreatedAtDesc(userId: Int, templateId: Int): List<NotificationLog> =
+    override fun findByUserIdAndTemplateIdOrderByCreatedAtDesc(
+        userId: Int,
+        templateId: Int,
+    ): List<NotificationLog> =
         queryFactory
             .selectFrom(QNotificationLog.notificationLog)
             .where(
                 QNotificationLog.notificationLog.userId.eq(userId),
                 QNotificationLog.notificationLog.templateId.eq(templateId),
-            )
-            .orderBy(QNotificationLog.notificationLog.createdAt.desc())
+            ).orderBy(QNotificationLog.notificationLog.createdAt.desc())
             .fetch()
 
     /**
