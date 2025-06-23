@@ -3,7 +3,7 @@ package com.fiveguysburger.emodiary.core.dto
 import com.fiveguysburger.emodiary.core.enums.NotificationType
 import java.time.LocalDateTime
 
-data class FcmMessageDto private constructor(
+data class FcmMessageDto(
     val userId: Int,
     val token: String,
     val notificationType: NotificationType,

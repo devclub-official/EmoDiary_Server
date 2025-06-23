@@ -54,4 +54,11 @@ interface UsersService {
      * @return 사용자 정보 (없으면 null)
      */
     fun findUserById(userId: Int): Users?
+
+    /**
+     * 특정 기간 동안 로그인하지 않은 사용자 ID 목록을 조회합니다.
+     * @param days 기준일
+     * @return 비활성 사용자 ID 목록
+     */
+    fun findInactiveUserIds(days: Int): List<Int>
 }
