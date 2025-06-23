@@ -66,13 +66,9 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // spring-ai
-    implementation("org.springframework.ai:spring-ai-autoconfigure-model-chat-client:1.0.0")
-    implementation("org.springframework.ai:spring-ai-client-chat:1.0.0")
-    implementation("org.springframework.ai:spring-ai-starter-model-vertex-ai-gemini:1.0.0")
     implementation("org.springframework.ai:spring-ai-mcp:1.0.0")
-    implementation("org.springframework.ai:spring-ai-model:1.0.0")
-    implementation("org.springframework.ai:spring-ai-starter-mcp-client:1.0.0")
-
+    implementation("org.springframework.ai:spring-ai-starter-mcp-client-webflux:1.0.0")
+    implementation("org.springframework.ai:spring-ai-vertex-ai-gemini:1.0.0")
 }
 
 kotlin {

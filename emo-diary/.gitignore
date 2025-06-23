@@ -40,7 +40,3 @@ out/
 .kotlin
 ### FCM KEY ###
 /src/main/resources/emoDiary-firebase-key.json
-
-
-!**/src/main/resources/application.yml
-.idea/
