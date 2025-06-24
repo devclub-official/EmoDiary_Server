@@ -23,10 +23,6 @@ class NotificationLogController(
         @PathVariable status: NotificationStatus,
     ): ResponseEntity<List<NotificationLog>> = ResponseEntity.ok(notificationLogService.findByNotificationStatus(status))
 
-    @GetMapping("/inactive-users")
-    @Operation(summary = "장기 미접속 사용자 조회", description = "일주일 이상 로그인하지 않은 사용자 목록을 조회합니다.")
-    fun findInactiveUsers(): ResponseEntity<List<Int>> = ResponseEntity.ok(notificationLogService.findInactiveUsers())
-
     @GetMapping("/user/{userId}")
     @Operation(summary = "사용자별 알림 이력 조회", description = "특정 사용자의 알림 이력을 조회합니다.")
     fun findUserNotificationHistory(

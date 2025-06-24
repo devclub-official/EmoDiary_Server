@@ -64,16 +64,6 @@ class NotificationLogServiceImpl(
         notificationLogRepository.findByNotificationStatus(status)
 
     /**
-     * 일주일 이상 로그인하지 않은 사용자들을 조회합니다.
-     * @return 장기 미접속 사용자 ID 목록
-     */
-    @Transactional(readOnly = true)
-    override fun findInactiveUsers(): List<Int> {
-        val oneWeekAgo = LocalDate.now().minusWeeks(1)
-        return notificationLogRepository.findInactiveUsers(oneWeekAgo)
-    }
-
-    /**
      * 알림 발송 상태를 업데이트합니다.
      * @param id 알림 로그 ID
      * @param status 변경할 상태
