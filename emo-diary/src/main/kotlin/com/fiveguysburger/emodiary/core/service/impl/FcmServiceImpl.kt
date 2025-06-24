@@ -41,7 +41,7 @@ class FcmServiceImpl(
 
             return "message queued"
         } catch (e: Exception) {
-            logger.error("FCM 메시지 전송 실패: {}", e.message, e)
+            logger.error("FCM 메시지 전송 실패: ${e.message}", e)
             throw e
         }
     }
