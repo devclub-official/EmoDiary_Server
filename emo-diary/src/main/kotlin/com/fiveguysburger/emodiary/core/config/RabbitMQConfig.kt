@@ -31,17 +31,11 @@ class RabbitMQConfig {
         // durable 서버 재시작 후에도 큐 유지
         // exclusive 여러 연결에서 큐 접근 가능
         // autoDelete 마지막 소비자 연결 해제 시에도 큐 유지
-        // 메시지 TTL - 10분
-        // 큐 최대 길이 - 100000개
         Queue(
             notificationQueue,
             true,
             false,
             false,
-            mapOf(
-                "x-message-ttl" to 600000,
-                "x-max-length" to 100000,
-            ),
         )
 
     @Bean
