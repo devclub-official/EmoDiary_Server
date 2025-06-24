@@ -7,8 +7,6 @@ import com.fiveguysburger.emodiary.core.service.FcmTokenService
 import com.fiveguysburger.emodiary.core.service.UsersService
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
-import org.springframework.batch.core.configuration.annotation.JobScope
-import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.core.step.builder.StepBuilder
@@ -37,7 +35,6 @@ class InactiveUserNotifyJobConfig(
             .build()
 
     @Bean
-    @JobScope
     fun inactiveUserNotifyStep(): Step =
         StepBuilder("inactiveUserNotifyStep", jobRepository)
             .chunk<Int, FcmMessageDto>(CHUNK_SIZE, transactionManager)
@@ -47,7 +44,6 @@ class InactiveUserNotifyJobConfig(
             .build()
 
     @Bean
-    @StepScope
     fun inactiveUserReader(): ListItemReader<Int> {
         val inactiveUserIds = usersService.findInactiveUserIds(7)
         return ListItemReader(inactiveUserIds)
