@@ -4,5 +4,5 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class AnalysisResponse(
     @JsonProperty("diary_analysis_text")
-    val analysis : String?
+    val analysis: String?,
 )

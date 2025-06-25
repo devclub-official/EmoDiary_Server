@@ -1,6 +1,11 @@
 package com.fiveguysburger.emodiary.core.controller
 
-import com.fiveguysburger.emodiary.core.dto.*
+import com.fiveguysburger.emodiary.core.dto.AnalysisResponse
+import com.fiveguysburger.emodiary.core.dto.ApiResponse
+import com.fiveguysburger.emodiary.core.dto.ChatMessageRequest
+import com.fiveguysburger.emodiary.core.dto.ChatMessageResponse
+import com.fiveguysburger.emodiary.core.dto.CreateDiaryRoomResponse
+import com.fiveguysburger.emodiary.core.dto.Messages
 import com.fiveguysburger.emodiary.core.service.ChatRoomService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -46,12 +51,12 @@ class DiaryController(
     fun getChatRoomMessages(
         @AuthenticationPrincipal userId: String,
         @PathVariable("chatroomId") chatroomId: String,
-    ) : ResponseEntity<ApiResponse<Messages>>{
+    ): ResponseEntity<ApiResponse<Messages>> {
         return ResponseEntity.ok(
             chatRoomService.getAllMessages(
                 chatroomId = chatroomId,
-                userId = userId
-            )
+                userId = userId,
+            ),
         )
     }
 
@@ -59,12 +64,12 @@ class DiaryController(
     fun analysisDiary(
         @AuthenticationPrincipal userId: String,
         @PathVariable("chatroomId") chatroomId: String,
-    ) : ResponseEntity<ApiResponse<AnalysisResponse>> {
+    ): ResponseEntity<ApiResponse<AnalysisResponse>> {
         return ResponseEntity.ok(
             chatRoomService.requestDiaryAnalysis(
                 chatroomId = chatroomId,
-                userId = userId
-            )
+                userId = userId,
+            ),
         )
     }
 }

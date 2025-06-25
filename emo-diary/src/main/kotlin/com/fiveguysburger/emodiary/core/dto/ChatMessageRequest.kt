@@ -9,8 +9,7 @@ data class ChatMessageRequest(
 
 data class ChatMessageResponse(
     @JsonProperty("text")
-    val text: String, // LLM이 생성한 순수 텍스트
-
+    val text: String,
     @JsonProperty("sender")
-    val sender: String = "llm" // 보낸 사람은 항상 'llm'
+    val sender: String = "llm",
 )

@@ -48,7 +48,7 @@ class DirectToolCall(
                 "sort" to sort?.let { objectMapper.writeValueAsString(it) },
             )
 
-        return  callTool("spring_ai_mcp_client_mongodb_lens_find_documents", params)
+        return callTool("spring_ai_mcp_client_mongodb_lens_find_documents", params)
     }
 
     /**
