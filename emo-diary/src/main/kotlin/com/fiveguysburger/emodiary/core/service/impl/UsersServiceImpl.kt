@@ -1,10 +1,12 @@
 package com.fiveguysburger.emodiary.core.service.impl
 
+import com.fiveguysburger.emodiary.core.entity.QUserLoginDetails.userLoginDetails
 import com.fiveguysburger.emodiary.core.entity.UserLoginDetails
 import com.fiveguysburger.emodiary.core.entity.Users
 import com.fiveguysburger.emodiary.core.repository.UsersLoginDetailsRepository
 import com.fiveguysburger.emodiary.core.repository.UsersRepository
 import com.fiveguysburger.emodiary.core.service.UsersService
+import com.querydsl.jpa.impl.JPAQueryFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -13,6 +15,7 @@ import java.time.LocalDateTime
 class UsersServiceImpl(
     private val usersRepository: UsersRepository,
     private val userLoginDetailsRepository: UsersLoginDetailsRepository,
+    private val queryFactory: JPAQueryFactory,
 ) : UsersService {
     override fun registerUser(
         email: String,
@@ -92,4 +95,15 @@ class UsersServiceImpl(
 
     @Transactional(readOnly = true)
     override fun findUserById(userId: Int): Users? = usersRepository.findById(userId).orElse(null)
+
+    @Transactional(readOnly = true)
+    override fun findInactiveUserIds(days: Int): List<Int> {
+        val cutoffDate = LocalDateTime.now().minusDays(days.toLong())
+        return queryFactory
+            .select(userLoginDetails.userId)
+            .from(userLoginDetails)
+            .where(userLoginDetails.loginAt.lt(cutoffDate))
+            .fetch()
+            .mapNotNull { it }
+    }
 }

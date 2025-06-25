@@ -13,13 +13,6 @@ interface NotificationLogRepositoryCustom {
     fun findByNotificationStatus(status: NotificationStatus): List<NotificationLog>
 
     /**
-     * 일주일 이상 로그인하지 않은 사용자들을 조회합니다.
-     * @param cutoffDate 기준 날짜
-     * @return 장기 미접속 사용자 ID 목록
-     */
-    fun findInactiveUsers(cutoffDate: LocalDate): List<Int>
-
-    /**
      * 알림 발송 상태를 업데이트합니다.
      * @param id 알림 로그 ID
      * @param status 변경할 상태

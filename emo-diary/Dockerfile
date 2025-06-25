@@ -24,11 +24,43 @@ FROM openjdk:21-slim
 
 WORKDIR /app
 
+# Docker CLI 설치 시작
+# openjdk:21-slim 이미지는 Debian 기반이므로 apt-get 사용
+# 필요한 패키지 업데이트 및 Docker CLI 설치를 위한 종속성 설치
+RUN apt-get update && \
+    apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release && \
+    rm -rf /var/lib/apt/lists/*
+
+# Docker 공식 GPG 키 추가
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# Docker apt 저장소 추가
+RUN echo \
+    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Docker CLI만 설치 (데몬은 설치하지 않음)
+RUN apt-get update && \
+    apt-get install -y docker-ce-cli && \
+    rm -rf /var/lib/apt/lists/*
+# Docker CLI 설치 끝
+
 # 빌드 단계에서 생성된 JAR 파일 복사
 COPY --from=build /app/build/libs/*.jar app.jar
 
+# 서비스 계정 키 파일 복사
+COPY src/main/resources/gcp-service-account.json /app/gcp-service-account.json
+
 # 환경 변수 설정 (ENV 형식 수정)
 ENV JAVA_OPTS="-Xms512m -Xmx1024m"
+ENV GOOGLE_APPLICATION_CREDENTIALS="/app/gcp-service-account.json"
 
 # 컨테이너 실행 시 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]

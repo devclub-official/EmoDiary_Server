@@ -25,26 +25,6 @@ class NotificationLogRepositoryImpl(
             .fetch()
 
     /**
-     * 특정 날짜 이후에 알림이 없는 사용자들을 조회합니다.
-     * @param cutoffDate 기준 날짜
-     * @return 장기 미접속 사용자 ID 목록
-     */
-    override fun findInactiveUsers(cutoffDate: LocalDate): List<Int> =
-        queryFactory
-            .select(QNotificationLog.notificationLog.userId)
-            .from(QNotificationLog.notificationLog)
-            .where(
-                QNotificationLog.notificationLog.sentAt.before(cutoffDate.atStartOfDay()),
-                QNotificationLog.notificationLog.userId.notIn(
-                    queryFactory
-                        .select(QNotificationLog.notificationLog.userId)
-                        .from(QNotificationLog.notificationLog)
-                        .where(QNotificationLog.notificationLog.sentAt.after(cutoffDate.atStartOfDay())),
-                ),
-            ).distinct()
-            .fetch()
-
-    /**
      * 알림 발송 상태를 업데이트합니다.
      * @param id 알림 로그 ID
      * @param status 변경할 상태

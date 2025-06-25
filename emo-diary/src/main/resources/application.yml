@@ -73,6 +73,22 @@ spring:
           max-attempts: 3
           max-interval: 10000
           multiplier: 2.0
+  # 스프링 배치 설정
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: never
+  # 스케줄링 설정
+  task:
+    scheduling:
+      pool:
+        size: 5
+      thread-name-prefix: scheduled-task-
+logging:
+  level:
+    org.springframework.batch: DEBUG
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
