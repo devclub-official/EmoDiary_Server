@@ -3,6 +3,7 @@ package com.fiveguysburger.emodiary.core.service.impl
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fiveguysburger.emodiary.core.dto.TokenResponse
+import com.fiveguysburger.emodiary.core.dto.UserInfo
 import com.fiveguysburger.emodiary.core.entity.UserLoginDetails
 import com.fiveguysburger.emodiary.core.entity.Users
 import com.fiveguysburger.emodiary.core.repository.UsersLoginDetailsRepository
@@ -117,6 +118,11 @@ class LoginServiceImpl(
         // 3. 사용자 정보 추출
         val googleId = userInfo["sub"] as String
         val email = userInfo["email"] as String
+        val name = userInfo["name"] as? String
+        val givenName = userInfo["given_name"] as? String
+        val familyName = userInfo["family_name"] as? String
+        val picture = userInfo["picture"] as? String
+        val locale = userInfo["locale"] as? String
 
         // 4. 사용자 확인 및 처리
         processUserLogin(email, googleId, "google")
@@ -124,11 +130,24 @@ class LoginServiceImpl(
         // 4. JWT 토큰 쌍(액세스 토큰, 리프레시 토큰) 생성
         val (jwtAccessToken, jwtRefreshToken) = jwtTokenUtil.generateTokenPair(googleId, email)
 
-        // 5. TokenResponse 객체로 변환하여 반환
+        // 6. UserInfo DTO 생성
+        val userInfoDto =
+            UserInfo.fromGoogleUserInfo(
+                userId = googleId,
+                email = email,
+                name = name,
+                givenName = givenName,
+                familyName = familyName,
+                picture = picture,
+                locale = locale,
+            )
+
+        // 7. TokenResponse 객체로 변환하여 반환 (사용자 정보 포함)
         return TokenResponse.of(
             accessToken = jwtAccessToken,
             refreshToken = jwtRefreshToken,
             expiresIn = jwtTokenUtil.jwtExpirationMs / 1000,
+            userInfo = userInfoDto,
         )
     }
 
