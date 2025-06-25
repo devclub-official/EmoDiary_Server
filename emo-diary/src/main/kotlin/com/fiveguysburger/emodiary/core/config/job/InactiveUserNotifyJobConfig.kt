@@ -16,8 +16,10 @@ import org.springframework.batch.item.support.ListItemReader
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.context.annotation.DependsOn
 
 @Configuration
+@DependsOn("usersServiceImpl", "fcmTokenServiceImpl", "fcmServiceImpl")
 class InactiveUserNotifyJobConfig(
     private val jobRepository: JobRepository,
     private val transactionManager: PlatformTransactionManager,
