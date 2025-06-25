@@ -16,6 +16,7 @@ import java.time.LocalDateTime
 class NotificationScheduler(
     private val jobLauncher: JobLauncher,
     @Qualifier("inactiveUserNotifyJob") private val inactiveUserNotifyJob: Job,
+    @Qualifier("diaryReminderJob") private val diaryReminderJob: Job,
 ) {
     private val logger = LoggerFactory.getLogger(NotificationScheduler::class.java)
 
@@ -41,6 +42,31 @@ class NotificationScheduler(
             logger.warn("InactiveUserNotifyJob이 이미 완료되었습니다: ${e.message}")
         } catch (e: Exception) {
             logger.error("InactiveUserNotifyJob 실행 중 오류 발생: ${e.message}", e)
+        }
+    }
+
+    @Scheduled(cron = "0 0 20 * * ?")
+    fun runDiaryReminderJob() {
+        try {
+            logger.info("DiaryReminderJob 시작: ${LocalDateTime.now()}")
+
+            val jobParameters =
+                JobParametersBuilder()
+                    .addString("runAt", LocalDateTime.now().toString())
+                    .addLong("timestamp", System.currentTimeMillis())
+                    .toJobParameters()
+
+            val jobExecution = jobLauncher.run(diaryReminderJob, jobParameters)
+
+            logger.info("DiaryReminderJob 완료: JobExecutionId=${jobExecution.id}, Status=${jobExecution.status}")
+        } catch (e: JobExecutionAlreadyRunningException) {
+            logger.warn("DiaryReminderJob이 이미 실행 중입니다: ${e.message}")
+        } catch (e: JobRestartException) {
+            logger.error("DiaryReminderJob 재시작 실패: ${e.message}", e)
+        } catch (e: JobInstanceAlreadyCompleteException) {
+            logger.warn("DiaryReminderJob이 이미 완료되었습니다: ${e.message}")
+        } catch (e: Exception) {
+            logger.error("DiaryReminderJob 실행 중 오류 발생: ${e.message}", e)
         }
     }
 }
