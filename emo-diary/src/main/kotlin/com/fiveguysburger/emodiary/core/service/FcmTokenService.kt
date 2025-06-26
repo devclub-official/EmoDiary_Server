@@ -21,4 +21,10 @@ interface FcmTokenService {
      * @return FCM 토큰
      */
     fun getFcmToken(userId: Int): String?
+
+    /**
+     * Redis에 FCM 토큰이 있는 모든 사용자 ID 목록을 조회합니다.
+     * @return FCM 토큰이 있는 사용자 ID 목록
+     */
+    fun getAllUsersWithFcmTokens(): List<Int>
 }

@@ -26,7 +26,17 @@ class RabbitMQConfig {
     fun notificationExchange(): DirectExchange = DirectExchange(notificationExchange)
 
     @Bean
-    fun notificationQueue(): Queue = Queue(notificationQueue)
+    fun notificationQueue(): Queue =
+        // 큐 이름
+        // durable 서버 재시작 후에도 큐 유지
+        // exclusive 여러 연결에서 큐 접근 가능
+        // autoDelete 마지막 소비자 연결 해제 시에도 큐 유지
+        Queue(
+            notificationQueue,
+            true,
+            false,
+            false,
+        )
 
     @Bean
     fun notificationBinding(): Binding =

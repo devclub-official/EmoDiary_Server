@@ -25,4 +25,15 @@ class FcmTokenServiceImpl(
         val key = FcmConstants.FCM_TOKEN_KEY_PREFIX + userId
         return redisTemplate.opsForValue().get(key)
     }
+
+    override fun getAllUsersWithFcmTokens(): List<Int> {
+        val pattern = FcmConstants.FCM_TOKEN_KEY_PREFIX + "*"
+        val keys = redisTemplate.keys(pattern) ?: emptySet()
+
+        return keys.mapNotNull { key ->
+            // "fcm:token:" 접두사를 제거하여 사용자 ID 추출
+            val userIdStr = key.removePrefix(FcmConstants.FCM_TOKEN_KEY_PREFIX)
+            userIdStr.toIntOrNull()
+        }.sorted()
+    }
 }

@@ -25,8 +25,6 @@ data class FcmMessageDto(
 
         fun data(data: Map<String, String>) = apply { this.data = data }
 
-        fun sentAt(sentAt: LocalDateTime) = apply { this.sentAt = sentAt }
-
         fun build(): FcmMessageDto {
             require(userId > 0) { "사용자 ID는 0보다 커야 합니다." }
             require(token.isNotBlank()) { "토큰은 비어있을 수 없습니다." }
@@ -48,9 +46,5 @@ data class FcmMessageDto(
                 sentAt = sentAt,
             )
         }
-    }
-
-    companion object {
-        fun builder() = Builder()
     }
 }

@@ -2,10 +2,8 @@ package com.fiveguysburger.emodiary.core.service.impl
 
 import com.fiveguysburger.emodiary.core.dto.FcmMessageDto
 import com.fiveguysburger.emodiary.core.dto.NotificationMessageDto
-import com.fiveguysburger.emodiary.core.enums.NotificationStatus
 import com.fiveguysburger.emodiary.core.exception.FcmException
 import com.fiveguysburger.emodiary.core.service.FcmService
-import com.fiveguysburger.emodiary.core.service.NotificationLogService
 import com.fiveguysburger.emodiary.core.service.NotificationTemplateService
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Service
 class FcmServiceImpl(
     private val firebaseMessaging: FirebaseMessaging,
     private val notificationTemplateService: NotificationTemplateService,
-    private val notificationLogService: NotificationLogService,
     private val notificationProducer: NotificationProducer,
 ) : FcmService {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -44,35 +41,19 @@ class FcmServiceImpl(
 
             return "message queued"
         } catch (e: Exception) {
-            logger.error("FCM 메시지 전송 실패: {}", e.message, e)
+            logger.error("FCM 메시지 전송 실패: ${e.message}", e)
             throw e
         }
     }
 
     override fun processNotification(notificationMessage: NotificationMessageDto): String {
-        var notificationLog =
-            notificationLogService.findByUserIdAndTemplateId(
-                userId = notificationMessage.userId,
-                templateId = notificationMessage.templateId,
-            )
-
         try {
             // 1. 템플릿 조회
             val template =
                 notificationTemplateService.getTemplateByType(notificationMessage.notificationType.value)
                     ?: throw FcmException("템플릿을 찾을 수 없습니다: ${notificationMessage.notificationType}")
 
-            // 2. 알림 로그가 없으면 생성
-            if (notificationLog == null) {
-                notificationLog =
-                    notificationLogService.createNotificationLog(
-                        userId = notificationMessage.userId,
-                        templateId = notificationMessage.templateId,
-                        notificationType = notificationMessage.notificationType,
-                    )
-            }
-
-            // 3. FCM 메시지 생성 및 전송
+            // 2. FCM 메시지 생성 및 전송
             val fcmMessage =
                 Message
                     .builder()
@@ -86,34 +67,12 @@ class FcmServiceImpl(
                     .putAllData(notificationMessage.data)
                     .build()
 
-            // 4. 전송 중 상태로 업데이트
-            notificationLogService.updateNotificationStatus(
-                id = notificationLog.id,
-                status = NotificationStatus.SENDING,
-            )
-
             val messageId = firebaseMessaging.send(fcmMessage)
-            logger.info("FCM 메시지 전송 성공: messageId={}", messageId)
-
-            // 5. 전송 완료 상태로 업데이트
-            notificationLogService.updateNotificationStatus(
-                id = notificationLog.id,
-                status = NotificationStatus.SENT,
-                fcmMessageId = messageId,
-            )
+            logger.info("FCM 메시지 전송 성공: notificationMessageId=${notificationMessage.messageId}")
 
             return messageId
         } catch (e: Exception) {
-            logger.error("FCM 메시지 전송 실패: {}", e.message, e)
-
-            // 6. 실패 상태로 업데이트
-            notificationLog?.let {
-                notificationLogService.updateNotificationStatus(
-                    id = it.id,
-                    status = NotificationStatus.FAILED,
-                    errorMessage = e.message,
-                )
-            }
+            logger.error("FCM 메시지 전송 실패: notificationMessageId=${notificationMessage.messageId}, 오류: ${e.message}")
             throw e
         }
     }

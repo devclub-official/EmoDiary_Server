@@ -4,7 +4,6 @@ import com.fiveguysburger.emodiary.core.dto.FcmMessageDto
 import com.fiveguysburger.emodiary.core.enums.NotificationType
 import com.fiveguysburger.emodiary.core.service.FcmService
 import com.fiveguysburger.emodiary.core.service.FcmTokenService
-import com.fiveguysburger.emodiary.core.service.UsersService
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.job.builder.JobBuilder
@@ -19,10 +18,9 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.transaction.PlatformTransactionManager
 
 @Configuration
-class InactiveUserNotifyJobConfig(
+class DiaryReminderJobConfig(
     private val jobRepository: JobRepository,
     private val transactionManager: PlatformTransactionManager,
-    @Lazy private val usersService: UsersService,
     @Lazy private val fcmTokenService: FcmTokenService,
     @Lazy private val fcmService: FcmService,
 ) {
@@ -30,44 +28,45 @@ class InactiveUserNotifyJobConfig(
     private val CHUNK_SIZE = 100
 
     @Bean
-    fun inactiveUserNotifyJob(): Job =
-        JobBuilder("inactiveUserNotifyJob", jobRepository)
-            .start(inactiveUserNotifyStep())
+    fun diaryReminderJob(): Job =
+        JobBuilder("diaryReminderJob", jobRepository)
+            .start(diaryReminderStep())
             .build()
 
     @Bean
-    fun inactiveUserNotifyStep(): Step =
-        StepBuilder("inactiveUserNotifyStep", jobRepository)
+    fun diaryReminderStep(): Step =
+        StepBuilder("diaryReminderStep", jobRepository)
             .chunk<Int, FcmMessageDto>(CHUNK_SIZE, transactionManager)
-            .reader(inactiveUserReader())
-            .processor(inactiveUserProcessor())
-            .writer(inactiveUserWriter())
+            .reader(diaryReminderReader())
+            .processor(diaryReminderProcessor())
+            .writer(diaryReminderWriter())
             .build()
 
     @Bean
-    fun inactiveUserReader(): ListItemReader<Int> {
-        val inactiveUserIds = usersService.findInactiveUserIds(7)
-        return ListItemReader(inactiveUserIds)
+    fun diaryReminderReader(): ListItemReader<Int> {
+        // Redis에 FCM 토큰이 있는 사용자 ID 목록 조회
+        val usersWithFcmTokens = fcmTokenService.getAllUsersWithFcmTokens()
+        return ListItemReader(usersWithFcmTokens)
     }
 
     @Bean
-    fun inactiveUserProcessor(): ItemProcessor<Int, FcmMessageDto> =
+    fun diaryReminderProcessor(): ItemProcessor<Int, FcmMessageDto> =
         ItemProcessor { userId ->
             val token = fcmTokenService.getFcmToken(userId)
             if (token != null) {
                 FcmMessageDto(
                     userId = userId,
                     token = token,
-                    notificationType = NotificationType.INACTIVE_DIARY,
-                    data = mapOf("reason" to "inactive_user_notification"),
+                    notificationType = NotificationType.DIARY_REMINDER,
+                    data = mapOf("reason" to "diary_reminder_notification"),
                 )
             } else {
-                null // 토큰 없는 사용자는 건너뛰기
+                null // 토큰이 없는 사용자는 건너뛰기
             }
         }
 
     @Bean
-    fun inactiveUserWriter(): ItemWriter<FcmMessageDto> =
+    fun diaryReminderWriter(): ItemWriter<FcmMessageDto> =
         ItemWriter { chunk ->
             chunk.forEach { message ->
                 fcmService.sendMessage(message)
