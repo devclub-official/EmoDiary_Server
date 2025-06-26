@@ -62,6 +62,8 @@ COPY gcp-service-account.json /app/gcp-service-account.json
 # 환경 변수 설정 (ENV 형식 수정)
 ENV JAVA_OPTS="-Xms512m -Xmx1024m"
 ENV GOOGLE_APPLICATION_CREDENTIALS="/app/gcp-service-account.json"
+ENV GOOGLE_CLOUD_PROJECT="emodiary-463320"
+ENV GCP_PROJECT="emodiary-463320"
 
 # 컨테이너 실행 시 애플리케이션 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
