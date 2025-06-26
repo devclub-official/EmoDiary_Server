@@ -73,6 +73,34 @@ spring:
           max-attempts: 3
           max-interval: 10000
           multiplier: 2.0
+
+  ai:
+    vertex:
+      ai:
+        gemini:
+          project-id: ${VERTEX_PROJECT_ID}
+          location: ${VERTEX_LOCATION}
+          api-endpoint: ${VERTEX_API_ENDPOINT}
+          chat:
+            options:
+              model: ${GEMINI_MODEL}
+          transport: rest
+    mcp:
+      client:
+        enabled: true
+        type: SYNC
+        stdio:
+          connections:
+            mongodb-lens:
+              command: docker
+              args:
+                - "run"
+                - "--rm"
+                - "-i"
+                - "--network=host"
+                - "furey/mongodb-lens"
+                - ${MONGO_DB_URI}
+
   # 스프링 배치 설정
   batch:
     job:
@@ -85,6 +113,7 @@ spring:
       pool:
         size: 5
       thread-name-prefix: scheduled-task-
+
 logging:
   level:
     org.springframework.batch: DEBUG
