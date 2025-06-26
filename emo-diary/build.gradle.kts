@@ -72,7 +72,6 @@ dependencies {
     implementation("org.springframework.ai:spring-ai-mcp:1.0.0")
     implementation("org.springframework.ai:spring-ai-model:1.0.0")
     implementation("org.springframework.ai:spring-ai-starter-mcp-client:1.0.0")
-
 }
 
 kotlin {
