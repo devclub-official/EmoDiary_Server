@@ -55,8 +55,9 @@ RUN apt-get update && \
 # 빌드 단계에서 생성된 JAR 파일 복사
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# 서비스 계정 키 파일 복사
-COPY src/main/resources/gcp-service-account.json /app/gcp-service-account.json
+# Jenkins Secret File로부터 GCP 서비스 계정 키 파일 복사
+# Jenkins 빌드 시점에 워크스페이스에 복사된 파일을 사용
+COPY gcp-service-account.json /app/gcp-service-account.json
 
 # 환경 변수 설정 (ENV 형식 수정)
 ENV JAVA_OPTS="-Xms512m -Xmx1024m"
