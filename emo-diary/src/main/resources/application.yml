@@ -3,13 +3,13 @@ spring:
     name: EmoDiary
   # 개발용 설정
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:emodiary}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:password}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: none  # 개발 환경에서는 update, 운영 환경에서는 validate 권장
+      ddl-auto: none # 개발 환경에서는 update, 운영 환경에서는 validate 권장
     show-sql: true
     properties:
       hibernate:
@@ -22,15 +22,20 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            #redirect-uri: "http://54.180.30.13:8080/api/users/login/google"
-            redirect-uri: "http://localhost:8080/api/login/google"
+            # PRD
+            redirect-uri: "https://emodiary-client.vercel.app/auth/callback"
+            # DEV
+            # redirect-uri: "http://localhost:8080/api/login/google"
             scope:
               - email
               - profile
           kakao:
-            client-id: ${KAKAO_CLIENT_ID}  # REST API 키
-            client-secret: ${KAKAO_CLIENT_SECRET}  # Client Secret 키
-            redirect-uri: http://localhost:8080/api/users/login/kakao
+            client-id: ${KAKAO_CLIENT_ID} # REST API 키
+            client-secret: ${KAKAO_CLIENT_SECRET} # Client Secret 키
+            # PRD
+            redirect-uri: "http://emodiary.duckdns.org:8080/api/login/kakao"
+            # DEV
+            # redirect-uri: http://localhost:8080/api/users/login/kakao
             authorization-grant-type: authorization_code
             client-authentication-method: POST
             client-name: Kakao
@@ -48,11 +53,71 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
   redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:}
-    database: ${REDIS_DATABASE:0}
-    timeout: ${REDIS_TIMEOUT:60000}
+    data:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      database: ${REDIS_DATABASE}
+      timeout: ${REDIS_TIMEOUT}
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    virtual-host: /
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          max-interval: 10000
+          multiplier: 2.0
+
+  ai:
+    vertex:
+      ai:
+        gemini:
+          project-id: ${VERTEX_PROJECT_ID}
+          location: ${VERTEX_LOCATION}
+          api-endpoint: ${VERTEX_API_ENDPOINT}
+          chat:
+            options:
+              model: ${GEMINI_MODEL}
+          transport: rest
+    mcp:
+      client:
+        enabled: true
+        type: SYNC
+        stdio:
+          connections:
+            mongodb-lens:
+              command: docker
+              args:
+                - "run"
+                - "--rm"
+                - "-i"
+                - "--network=host"
+                - "furey/mongodb-lens"
+                - ${MONGO_DB_URI}
+
+  # 스프링 배치 설정
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: never
+  # 스케줄링 설정
+  task:
+    scheduling:
+      pool:
+        size: 5
+      thread-name-prefix: scheduled-task-
+
+logging:
+  level:
+    org.springframework.batch: DEBUG
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -66,4 +131,11 @@ springdoc:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 86400000  # 24시간
+  expiration: 86400000 # 24시간
+  refresh-expiration: 604800000 # 24시간
+
+rabbitmq:
+  notification:
+    exchange: notification.exchange
+    queue: notification.queue
+    routing-key: notification.routing.key

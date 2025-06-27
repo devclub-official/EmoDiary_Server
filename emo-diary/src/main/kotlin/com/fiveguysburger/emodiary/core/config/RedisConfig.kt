@@ -15,19 +15,19 @@ import java.time.Duration
 
 @Configuration
 class RedisConfig {
-    @Value("\${spring.redis.host}")
+    @Value("\${spring.redis.data.host}")
     private lateinit var host: String
 
-    @Value("\${spring.redis.port}")
+    @Value("\${spring.redis.data.port}")
     private var port: Int = 0
 
-    @Value("\${spring.redis.password:}")
+    @Value("\${spring.redis.data.password:}")
     private var password: String = "" // 기본값을 빈 문자열로 설정하고 lateinit 제거
 
-    @Value("\${spring.redis.database}")
+    @Value("\${spring.redis.data.database}")
     private var database: Int = 0
 
-    @Value("\${spring.redis.timeout}")
+    @Value("\${spring.redis.data.timeout}")
     private var timeout: Long = 60000
 
     @Bean
