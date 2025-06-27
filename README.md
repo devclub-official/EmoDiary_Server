@@ -70,9 +70,12 @@
 - ✅ [기능 4]: 알림 시스템
 
 ## 🔄흐름도
-### ![로그인 흐름.png](emo-diary/image/%EB%A1%9C%EA%B7%B8%EC%9D%B8%20%ED%9D%90%EB%A6%84.png)
-### ![알림처리흐름.png](emo-diary/image/%EC%95%8C%EB%A6%BC%EC%B2%98%EB%A6%AC%ED%9D%90%EB%A6%84.png)
-### ![채팅흐름.png](emo-diary/image/%EC%B1%84%ED%8C%85%ED%9D%90%EB%A6%84.png)
+### 로그인 흐름 
+![로그인 흐름.png](emo-diary/image/로그인흐름.png)
+### 알림 처리 흐름
+![알림처리흐름.png](emo-diary/image/알림처리흐름.png)
+### 채팅 흐름 
+![채팅흐름.png](emo-diary/image/채팅흐름.png)
 
 ## 🤝 협업 방식 및 병합 방법
 ### 브랜치 전략
